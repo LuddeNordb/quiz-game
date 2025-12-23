@@ -266,38 +266,22 @@
         // Fetch questions list from server on page load
 
         function fetchQuestions() {
-
             fetch('/get_questions')
+            .then(response => response.json())
+            .then(data => {
+                const questionSelect = document.getElementById('questionSelect');
+                questionSelect.innerHTML = '<option selected disabled>Select a question</option>'; 
 
-                .then(response => response.json())
-
-                .then(data => {
-
-                    const questionSelect = document.getElementById('questionSelect');
-
-                    questionSelect.innerHTML =
-
-                        '<option selected disabled>Select a question</option>'; // Reset options
-
-
-
-                    data.questions.forEach(question => {
-
-                        const option = document.createElement('option');
-
-                        option.value = question.id;
-
-                        option.textContent = question.text;
-
-                        questionSelect.appendChild(option);
-
-                    });
-
-                })
-
-                .catch(error => console.error('Error fetching questions:', error));
-
-        }
+                data.questions.forEach(question => {
+                    const option = document.createElement('option');
+                    option.value = question.id;
+                    // Use question.name for the display text
+                    option.textContent = question.name || `Question ${question.id}`; 
+                    questionSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching questions:', error));
+    }
 
 
 
@@ -414,123 +398,63 @@
         // Set next question based on dropdown selection
 
         function setNextQuestion() {
+    const questionId = document.getElementById('questionSelect').value;
 
-            const questionId = document.getElementById('questionSelect').value;
+    if (!questionId) {
+        Swal.fire({
+            title: "Selection Required",
+            text: "Please select a question.",
+            icon: "warning",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
 
-
-
-            if (!questionId) {
-
-                Swal.fire({
-
-                    title: "Selection Required",
-
-                    text: "Please select a question.",
-
-                    icon: "warning",
-
-                    confirmButtonText: "OK"
-
-                });
-
-                return;
-
-            }
-
-
-
-            fetch('/set_next_question', {
-
-                method: 'POST',
-
-                headers: {
-
-                    'Content-Type': 'application/json'
-
-                },
-
-                body: JSON.stringify({
-
-                    question_id: parseInt(questionId)
-
-                })
-
-            })
-
-                .then(response => response.json())
-
-                .then(data => {
-
-                    if (data.success) {
-
-                        Swal.fire({
-
-                            title: "Success",
-
-                            text: `Next question set: ${data.question.text}`,
-
-                            icon: "success",
-
-                            confirmButtonText: "OK"
-
-                        });
-
-                    } else {
-
-                        Swal.fire({
-
-                            title: "Error",
-
-                            text: "Failed to set the next question.",
-
-                            icon: "error",
-
-                            confirmButtonText: "OK"
-
-                        });
-
-                    }
-
-                })
-
-                .catch(error => console.error('Error setting next question:', error));
-
+    fetch('/set_next_question', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            question_id: parseInt(questionId)
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Clear the current answers from the admin UI immediately
+            answers = []; 
+            document.getElementById('answers').innerHTML = '';
+            
+            Swal.fire({
+                title: "Success",
+                text: `Next question set: ${data.question.name || data.question.text}`,
+                icon: "success",
+                confirmButtonText: "OK"
+            });
+            
+            // Re-fetch game state to ensure it is empty
+            fetchAnswers(); 
+        } else {
+            Swal.fire({ title: "Error", text: "Failed to set the next question.", icon: "error" });
         }
-
-
-
-        // Fetch and display answers
-
-        function fetchAnswers() {
-
-            fetch('/get_game_state')
-
-                .then(response => response.json())
-
-                .then(data => {
-
-                    answers = data.answers; // The answers array is updated with the latest data
-
-                    updatePage(); // Update the UI with the updated answers
-
-                })
-
-                .catch(error => console.error('Error fetching answers:', error));
-
-        }
+    });
+}
 
 
 
         // Update the page with answers and votes
 
         function updatePage() {
-
             const answersContainer = document.getElementById('answers');
+            
+            // If no answers exist for the current question, display a placeholder
+            if (answers.length === 0) {
+                answersContainer.innerHTML = '<div class="col-12 text-center text-muted"><p>Waiting for player submissions...</p></div>';
+                return;
+            }
 
-            answersContainer.innerHTML = ''; // Clear previous answers
-
-
-
+            answersContainer.innerHTML = ''; 
             answers.forEach(answer => {
 
                 const answerElement = document.createElement('div');
@@ -539,15 +463,13 @@
 
                 answerElement.id = `answer-${answer.id}`; // Give each answer an ID for easy access
 
-                answerElement.innerHTML = `
+                const answersList = answer.texts.map((t, i) => `<p>Part ${i+1}: ${t}</p>`).join('');
 
-    <div class="card shadow-sm">
-
-        <div class="card-body">
-
-            <h5 class="card-title text-info">Created By: ${answer.username}</h5>
-
-            <h5 class="card-title text-primary">Answer: ${answer.text}</h5>
+    answerElement.innerHTML = `
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-info">User: ${answer.username}</h5>
+                <div class="text-white">${answersList}</div>
 
             <p class="card-text"><strong>Voted By:</strong> ${answer.votes.map(vote => vote.username).join(', ')}</p>
 
@@ -656,51 +578,26 @@
         // Add new question
 
         function addQuestion() {
+            const questionName = prompt("Enter a short name for this question set (e.g., 'Animal Quiz'):");
+            if (!questionName) return;
 
-            const questionText = prompt("Enter the new question:");
+            const partsInput = prompt("Enter the question parts separated by commas (e.g., 'What is the animal?, Why?'):");
+            if (!partsInput) return;
 
+            const partsArray = partsInput.split(',').map(p => p.trim());
 
-
-            if (questionText) {
-
-                fetch('/add_question', {
-
-                    method: 'POST',
-
-                    headers: { 'Content-Type': 'application/json' },
-
-                    body: JSON.stringify({ text: questionText })
-
-                })
-
-                    .then(response => response.json())
-
-                    .then(data => {
-
-                        if (data.success) {
-
-                            Swal.fire({
-
-                                title: "Success",
-
-                                text: "Question added successfully!",
-
-                                icon: "success",
-
-                                confirmButtonText: "OK"
-
-                            });
-
-                            fetchQuestions(); // Refresh the question list
-
-                        }
-
-                    })
-
-                    .catch(error => console.error('Error adding question:', error));
-
-            }
-
+            fetch('/add_question', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: questionName, parts: partsArray })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({ title: "Success", text: "Question added!", icon: "success" });
+                    fetchQuestions();
+                }
+            });
         }
 
 

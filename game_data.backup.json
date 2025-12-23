@@ -2,58 +2,68 @@
     "questions": [
         {
             "id": 1,
-            "text": "What is your favorite animal?"
+            "name": "Favorite color",
+            "parts": [
+                "What is your favorite color?",
+                "Why?"
+            ]
         },
         {
             "id": 2,
-            "text": "test2"
-        },
-        {
-            "id": 3,
-            "text": "test3"
-        },
-        {
-            "id": 4,
-            "text": "Test ?"
+            "name": "Favorite Animal Trivia",
+            "parts": [
+                "What is your favorite animal?",
+                "Does it have fur?"
+            ]
         }
     ],
-    "answers": [],
+    "answers": [
+        {
+            "id": 1,
+            "question_id": 1,
+            "texts": [
+                "t",
+                "y"
+            ],
+            "username": "ss",
+            "avatar": "/static/avatars/7.webp",
+            "votes": [],
+            "random_num": 731,
+            "visible": true
+        },
+        {
+            "id": 2,
+            "question_id": 1,
+            "texts": [
+                "d",
+                "g"
+            ],
+            "username": "gg",
+            "avatar": "/static/avatars/4.webp",
+            "votes": [],
+            "random_num": 940,
+            "visible": true
+        }
+    ],
     "votes": [],
     "reveal": false,
     "users": [
         {
-            "username": "test1",
-            "avatar": "/static/avatars/1.webp",
-            "score": 5
+            "username": "gg",
+            "avatar": "/static/avatars/4.webp",
+            "score": 2
         },
         {
-            "username": "333",
-            "avatar": "/static/avatars/1.webp",
-            "score": 0
-        },
-        {
-            "username": "rfg",
-            "avatar": "/static/avatars/3.webp",
-            "score": 0
-        },
-        {
-            "username": "123",
-            "avatar": "/static/avatars/1.webp",
-            "score": 0
-        },
-        {
-            "username": "ssss",
-            "avatar": "/static/avatars/1.webp",
-            "score": 0
-        },
-        {
-            "username": "Lodd",
-            "avatar": "/static/avatars/2.webp",
-            "score": 0
+            "username": "ss",
+            "avatar": "/static/avatars/7.webp",
+            "score": 2
         }
     ],
     "current_question": {
-        "id": 2,
-        "text": "test2"
+        "id": 1,
+        "parts": [
+            "What is your favorite color?",
+            "Why?"
+        ]
     }
 }

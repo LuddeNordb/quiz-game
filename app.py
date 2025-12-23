@@ -174,6 +174,7 @@ def save_data(data):
         
         with open('game_data.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
+            f.truncate()  # This ensures no old "dangling" text remains
         return True
     except Exception as e:
         app.logger.error(f"Error saving data: {str(e)}")
@@ -270,26 +271,28 @@ def get_questions():
 
 @app.route('/submit_answer', methods=['POST'])
 def submit_answer():
-    """Handles the submission of answers along with user information and avatar."""
-    answer_text = request.json['answer']
+    # Expecting answers to be a list of strings
+    answer_parts = request.json['answers'] 
     question_id = request.json['question_id']
     avatar = request.json['avatar']
-
-    # Retrieve username from session
     username = session.get('username')
 
     data = load_data()
     answer_id = len(data['answers']) + 1
+    
     data['answers'].append({
         "id": answer_id,
         "question_id": question_id,
-        "text": answer_text,
-        "username": username,  # Store username with the answer
+        "texts": answer_parts,  # Store as a list
+        "username": username,
         "avatar": avatar,
-        "votes": [],  # Initialize empty vote list for each answer
+        "votes": [],
         "random_num": random.randint(1, 1000),
         "visible": False
     })
+
+    save_data(data)
+    return jsonify(success=True)
 
     save_data(data)
     return jsonify(success=True)
@@ -342,18 +345,21 @@ def vote():
 
 @app.route('/add_question', methods=['POST'])
 def add_question():
-    """Adds a new question."""
+    """Adds a new question with a name and parts."""
     data = load_data()
-    new_question_text = request.json.get('text')
+    new_name = request.json.get('name')
+    new_parts = request.json.get('parts', []) # Expecting a list of strings
 
-    if new_question_text:
-        new_question_id = max(
-            q['id'] for q in data['questions']) + 1 if data['questions'] else 1
-        data['questions'].append(
-            {"id": new_question_id, "text": new_question_text})
+    if new_name and new_parts:
+        new_id = max(q['id'] for q in data['questions']) + 1 if data['questions'] else 1
+        data['questions'].append({
+            "id": new_id, 
+            "name": new_name, 
+            "parts": new_parts
+        })
         save_data(data)
         return jsonify(success=True)
-    return jsonify(success=False)
+    return jsonify(success=False, error="Name and parts are required")
 
 @app.route('/remove_question', methods=['POST'])
 def remove_question():

@@ -326,12 +326,10 @@
                 <div class="col-md-12">
 
                     <div class="mb-3">
-
-                        <label for="answerInput" class="form-label text-color">Your Answer</label>
-
-                        <input type="text" class="form-control form-control-lg" id="answerInput"
-                            placeholder="Enter your answer" />
-
+                        <label class="form-label text-color">Your Answers</label>
+                        <div id="answerInputsContainer">
+                            <input type="text" class="form-control form-control-lg part-input" id="answerInput" placeholder="Enter your answer" />
+                        </div>
                     </div>
 
                     <button id="submitAnswer" class="btn btn-lg btn-success w-100">Submit Answer</button>
@@ -375,6 +373,8 @@
         var userName = "{{ username }}"; // Get the username from the Flask session
 
         var userId = "{{ username }}"; // Get the username from the Flask session
+
+        let currentQuestionId = 1;
 
 
 
@@ -683,50 +683,55 @@
 
 
         socket.on('next_question', function (data) {
-
-            document.getElementById('question-text').innerText = data.question.text;
-
-
-
-            document.getElementById('answerInput').value = '';
-
-            selectedAvatar = "{{ avatar }}";
-
-            document.getElementById('userName').disabled = false;
-
-            document.getElementById('submitAnswer').disabled = false;
-
-            document.querySelectorAll('#avatarSelection img').forEach(function (img) {
-
-                img.style.removeProperty('pointer-events');
-
-            });
-
-
-
-            document.querySelectorAll('#avatarSelection img').forEach(function (img) {
-
-                img.classList.remove('selected');
-
-            });
-
-
-
-            document.querySelectorAll('#avatarSelection img').forEach(function (img) {
-
-                img.classList.remove('selected');
-
-            });
-
-
-
-            localStorage.removeItem('hasVoted');
-
-
-
-            loadAnswersAndVotes();
-
+    // 1. Update the Question Text
+    const questionTextElement = document.getElementById('question-text');
+    questionTextElement.innerHTML = ''; // Clear previous
+    
+    // Check if the question uses the new 'parts' list structure
+    if (data.question.parts && data.question.parts.length > 0) {
+        data.question.parts.forEach((part, index) => {
+            const partDiv = document.createElement('div');
+            partDiv.innerText = `${index + 1}. ${part}`;
+            partDiv.style.marginBottom = "10px";
+            questionTextElement.appendChild(partDiv);
         });
+
+        // 2. Create matching Input Fields in the container
+        const container = document.getElementById('answerInputsContainer');
+        if (container) {
+            container.innerHTML = ''; // Clear old inputs
+            data.question.parts.forEach((part, index) => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control form-control-lg mb-3 part-input';
+                input.placeholder = `Answer for part ${index + 1}...`;
+                container.appendChild(input);
+            });
+        }
+    } else {
+        // Fallback for old single-text questions
+        questionTextElement.innerText = data.question.text;
+        // Also clear the single input if it exists
+        const singleInput = document.getElementById('answerInput');
+        if (singleInput) singleInput.value = '';
+    }
+
+    // --- RESTORED RESET CODE ---
+    // Re-enable the submit button for the new question
+    document.getElementById('submitAnswer').disabled = false;
+
+    // Reset avatar selection styling and interactions
+    document.querySelectorAll('#avatarSelection img').forEach(function (img) {
+        img.style.removeProperty('pointer-events');
+        img.classList.remove('selected');
+    });
+
+    // Clear voting state for the new question
+    localStorage.removeItem('hasVoted');
+
+    // Refresh the list to clear old answers from the screen
+    loadAnswersAndVotes();
+});
 
 
 
@@ -990,109 +995,45 @@
 
         });
 
+
         document.getElementById('submitAnswer').addEventListener('click', function () {
+    const inputs = document.querySelectorAll('.part-input');
+    const answers = Array.from(inputs).map(input => input.value);
 
-            userName = userName;
+    // Validation: Ensure all parts have an answer
+    if (answers.some(a => !a.trim())) {
+        Swal.fire({ title: "Oops!", text: "Please answer all parts!", icon: "warning" });
+        return;
+    }
 
-            var answerText = document.getElementById('answerInput').value;
+    fetch('/submit_answer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            answers: answers, 
+            username: userId, // Ensure userId is defined globally as it is now
+            question_id: currentQuestionId,
+            avatar: selectedAvatar
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({ title: "Good job!", text: "Answers submitted!", icon: "success" });
+            
+            // Corrected: Disable the submit button
+            document.getElementById('submitAnswer').disabled = true;
 
-
-
-            var questionId = 1;
-
-
-
-            if (!userName) {
-
-                Swal.fire({
-
-                    title: "Oops!",
-
-                    text: "Please enter your name!",
-
-                    icon: "warning",
-
-                    confirmButtonText: "OK"
-
+            // Corrected: Disable avatar selection
+            const avatarContainer = document.getElementById('avatarSelection');
+            if (avatarContainer) {
+                avatarContainer.querySelectorAll('img').forEach(img => {
+                    img.style.pointerEvents = 'none';
                 });
-
-                return;
-
             }
-
-            if (!selectedAvatar) {
-
-                Swal.fire({
-
-                    title: "Oops!",
-
-                    text: "Please select an avatar!",
-
-                    icon: "warning",
-
-                    confirmButtonText: "OK"
-
-                });
-
-                return;
-
-            }
-
-
-
-            fetch('/submit_answer', {
-
-                method: 'POST',
-
-                headers: {
-
-                    'Content-Type': 'application/json'
-
-                },
-
-                body: JSON.stringify({
-
-                    answer: answerText,
-
-                    username: userId,
-
-                    question_id: questionId,
-
-                    avatar: selectedAvatar
-
-                })
-
-            }).then(response => response.json())
-
-                .then(data => {
-
-                    console.log('Answer submitted', data);
-
-                    Swal.fire({
-
-                        title: "Good job!",
-
-                        text: "Answer submitted!",
-
-                        icon: "success"
-
-                    });
-
-                    document.getElementById('userName').disabled = true;
-
-                    document.getElementById('avatarSelection').querySelectorAll('img').forEach(img => {
-
-                        img.style.pointerEvents = 'none';
-
-                    });
-
-
-
-                    document.getElementById('submitAnswer').disabled = true;
-
-                });
-
-        });
+        }
+    });
+});
 
 
 
