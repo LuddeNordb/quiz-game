@@ -28,29 +28,48 @@
                 "The name starts with 'K'."
             ],
             "current_clue_index": 0
+        },
+        {
+            "id": 4,
+            "name": "Geography Challenge",
+            "type": "map",
+            "text": "Where is Paris located?",
+            "target_lat": 48.8566,
+            "target_lon": 2.3522
         }
     ],
-    "answers": [],
+    "answers": [
+        {
+            "id": 1,
+            "question_id": 3,
+            "text": [
+                "retre",
+                "hhhhh"
+            ],
+            "username": "Lodd",
+            "avatar": "/static/avatars/3.webp",
+            "votes": [],
+            "potential_points": 3,
+            "random_num": 726,
+            "visible": true,
+            "is_correct": false
+        }
+    ],
     "votes": [],
     "reveal": false,
     "users": [
         {
             "username": "Lodd",
             "avatar": "/static/avatars/3.webp",
-            "score": 0
+            "score": 12
         }
     ],
     "current_question": {
-        "id": 3,
-        "name": "Mystery Object",
-        "type": "decreasing",
-        "clues": [
-            "It is found in a kitchen.",
-            "It is used for boiling water.",
-            "It whistles when ready.",
-            "It has a handle and a spout.",
-            "The name starts with 'K'."
-        ],
-        "current_clue_index": 0
+        "id": 2,
+        "name": "Favorite Animal Trivia",
+        "parts": [
+            "What is your favorite animal?",
+            "Does it have fur?"
+        ]
     }
 }

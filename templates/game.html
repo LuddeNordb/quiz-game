@@ -326,9 +326,9 @@
                 <div class="col-md-12">
 
                     <div class="mb-3">
-                        <label class="form-label text-color">Your Answers</label>
+                        <label class="form-label text-color">Your Answer(s)</label>
                         <div id="answerInputsContainer">
-                            <input type="text" class="form-control form-control-lg part-input" id="answerInput" placeholder="Enter your answer" />
+                            <input type="text" class="form-control form-control-lg part-input" placeholder="Loading..." />
                         </div>
                     </div>
 
@@ -485,14 +485,9 @@
             fetch('/get_game_state')
 
                 .then(response => response.json())
-
                 .then(data => {
-
                     const answersList = document.getElementById('answers-list');
-
                     answersList.innerHTML = '';
-
-
 
                     const rowDiv = document.createElement('div');
 
@@ -512,25 +507,25 @@
 
                         answerDiv.classList.add('col-md-12', 'card', 'mt-3');
 
+                        let displayHeader = "";
+                        if (answer.potential_points !== undefined) {
+                            displayHeader = `<strong>${answer.potential_points}</strong>: ${answer.username}`;
+                        } else {
+                            displayHeader = `${answer.username}`;
+                        }
+
                         answerDiv.innerHTML = `
-
-                    <div class="card-body">
-
-                        <!-- Avatar and name are hidden initially -->
-
-                        <div class="answer-info" style="display: ${data.reveal ? 'block' : 'none'};">
-
-                            <img src="${answer.avatar}" alt="${answer.username}'s Avatar" class="rounded-circle" width="50" data-bs-toggle="tooltip" title="${answer.username}">
-
-                            <p class="card-text"><strong>${answer.username}</strong>: ${answer.text}</p>
-
-                        </div>
-
-                        <!-- Reveal button and vote button -->
-
-                    </div>
-
-                `;
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <img src="${answer.avatar}" alt="${answer.username}'s Avatar" class="rounded-circle answer-avatar" width="50" style="display: none;" data-bs-toggle="tooltip" title="${answer.username}">
+                                    <p class="card-text answer-text">
+                                        <strong class="answer-name">${displayHeader}</strong> 
+                                        ${Array.isArray(answer.text) ? answer.text.join(', ') : answer.text}
+                                    </p>
+                                    <div class="votes" id="votes-${answer.id}" style="display: ${votesRevealed ? 'block' : 'none'};">Votes: ${answer.votes.join(', ')}</div>
+                                </div>                    
+                            </div>
+                        `;
 
                         rowDiv.appendChild(answerDiv);
 
@@ -675,55 +670,38 @@
 
 
         socket.on('next_question', function (data) {
-    // 1. Update the Question Text
-    const questionTextElement = document.getElementById('question-text');
-    questionTextElement.innerHTML = ''; // Clear previous
-    
-    // Check if the question uses the new 'parts' list structure
-    if (data.question.parts && data.question.parts.length > 0) {
-        data.question.parts.forEach((part, index) => {
-            const partDiv = document.createElement('div');
-            partDiv.innerText = `${index + 1}. ${part}`;
-            partDiv.style.marginBottom = "10px";
-            questionTextElement.appendChild(partDiv);
+            // 1. Render the new question structure
+            renderQuestionUI(data.question);
+
+            // 2. Clear inputs
+            const container = document.getElementById('answerInputsContainer');
+            if (container) {
+                container.innerHTML = ''; 
+                // For decreasing questions, we usually just need one input
+                if (data.question.type === 'decreasing') {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'form-control form-control-lg mb-3 part-input';
+                    input.placeholder = "Enter your guess here...";
+                    container.appendChild(input);
+                } else if (data.question.parts) {
+                    // Re-create inputs for parts
+                    data.question.parts.forEach((part, index) => {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'form-control form-control-lg mb-3 part-input';
+                        input.placeholder = `Answer for part ${index + 1}...`;
+                        container.appendChild(input);
+                    });
+                }
+            }
+
+            // 3. UI Resets
+            document.getElementById('submitAnswer').disabled = false;
+            localStorage.removeItem('hasVoted');
+            loadAnswersAndVotes();
         });
 
-        // 2. Create matching Input Fields in the container
-        const container = document.getElementById('answerInputsContainer');
-        if (container) {
-            container.innerHTML = ''; // Clear old inputs
-            data.question.parts.forEach((part, index) => {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.className = 'form-control form-control-lg mb-3 part-input';
-                input.placeholder = `Answer for part ${index + 1}...`;
-                container.appendChild(input);
-            });
-        }
-    } else {
-        // Fallback for old single-text questions
-        questionTextElement.innerText = data.question.text;
-        // Also clear the single input if it exists
-        const singleInput = document.getElementById('answerInput');
-        if (singleInput) singleInput.value = '';
-    }
-
-    // --- RESTORED RESET CODE ---
-    // Re-enable the submit button for the new question
-    document.getElementById('submitAnswer').disabled = false;
-
-    // Reset avatar selection styling and interactions
-    document.querySelectorAll('#avatarSelection img').forEach(function (img) {
-        img.style.removeProperty('pointer-events');
-        img.classList.remove('selected');
-    });
-
-    // Clear voting state for the new question
-    localStorage.removeItem('hasVoted');
-
-    // Refresh the list to clear old answers from the screen
-    loadAnswersAndVotes();
-});
 
 
 
@@ -777,31 +755,26 @@
 
                         answerDiv.classList.add('col-sm-12', 'col-md-12', 'col-12', 'col-lg-6', 'mb-4');
 
-
+                        let displayHeader = "";
+                        if (answer.potential_points !== undefined) {
+                            displayHeader = `<strong>${answer.potential_points}</strong>: ${answer.username}`;
+                        } else {
+                            displayHeader = `${answer.username}`;
+                        }
 
                         answerDiv.innerHTML = `
-
-                    <div class="card text-center">
-
-                    <div class="card-body">
-
-                        <img src="${answer.avatar}" alt="${answer.username}'s Avatar" class="rounded-circle answer-avatar" width="50" style="display: none;" data-bs-toggle="tooltip" title="${answer.username}">
-
-                        <p class="card-text answer-text"><strong class="answer-name" style="display: none;">${answer.username}</strong> ${answer.text}</p>
-
-                        <button class="btn btn-light vote-btn" data-answer-id="${answer.id}" ${votesRevealed || userHasVoted ? 'disabled' : ''}>Vote</button>
-
-                        <div class="votes" id="votes-${answer.id}" style="display: ${votesRevealed ? 'block' : 'none'};">Votes: ${answer.votes.join(', ')}</div>
-
-                    </div>                    
-
-                    </div>
-
-
-
-                `;
-
-                        answersList.appendChild(answerDiv);
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <img src="${answer.avatar}" alt="${answer.username}'s Avatar" class="rounded-circle answer-avatar" width="50" style="display: none;" data-bs-toggle="tooltip" title="${answer.username}">
+                                <p class="card-text answer-text">
+                                    <strong class="answer-name">${displayHeader}</strong> 
+                                    ${Array.isArray(answer.text) ? answer.text.join(', ') : answer.text}
+                                </p>
+                                <div class="votes" id="votes-${answer.id}" style="display: ${votesRevealed ? 'block' : 'none'};">Votes: ${answer.votes.join(', ')}</div>
+                            </div>                    
+                        </div>
+                    `;
+                    answersList.appendChild(answerDiv);
 
 
 
@@ -1112,43 +1085,89 @@
                 .then(data => {
                     const questionTextElement = document.getElementById('question-text');
                     if (data.current_question) {
-                        // Use a helper function to render the question correctly
+                        // Use the rendering helper to set up the text and clues
                         renderQuestionUI(data.current_question);
+                        
+                        // Set up the correct number of input boxes immediately
+                        setupAnswerInputs(data.current_question);
+                        
+                        // Store the ID for the submit button
+                        currentQuestionId = data.current_question.id; 
                     } else {
                         questionTextElement.innerText = "No question selected.";
                     }
                 });
         }
 
+        function setupAnswerInputs(question) {
+            const container = document.getElementById('answerInputsContainer');
+            if (!container) return;
+
+            container.innerHTML = ''; // Clear the default single box
+
+            if (question.type === 'decreasing') {
+                // Decreasing point questions only need one input box
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control form-control-lg mb-3 part-input';
+                input.placeholder = "Enter your guess here...";
+                container.appendChild(input);
+            } else if (question.parts && question.parts.length > 0) {
+                // Create an input for every part defined in the question
+                question.parts.forEach((part, index) => {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'form-control form-control-lg mb-3 part-input';
+                    input.placeholder = `Answer for part ${index + 1}...`;
+                    container.appendChild(input);
+                });
+            } else {
+                // Fallback for standard questions
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control form-control-lg part-input';
+                input.id = 'answerInput';
+                input.placeholder = "Enter your answer";
+                container.appendChild(input);
+            }
+        }
+
+// In game.html
         function renderQuestionUI(question) {
             const questionTextElement = document.getElementById('question-text');
             questionTextElement.innerHTML = ''; 
 
-            // Always show the Question Name if it exists
+            // Show Question Name/Title if available
             if (question.name) {
                 const title = document.createElement('h3');
                 title.innerText = question.name;
+                title.className = "mb-3";
                 questionTextElement.appendChild(title);
             }
 
             if (question.type === 'decreasing') {
-                // Show only the clues revealed so far
-                for (let i = 0; i <= question.current_clue_index; i++) {
-                    const clue = document.createElement('p');
-                    clue.className = 'alert alert-info';
-                    clue.innerText = `Clue ${i+1}: ${question.clues[i]}`;
-                    questionTextElement.appendChild(clue);
+                // Ensure we have a valid index
+                const currentIndex = question.current_clue_index !== undefined ? question.current_clue_index : 0;
+                
+                // Loop through all revealed clues
+                for (let i = 0; i <= currentIndex; i++) {
+                    if (question.clues && question.clues[i]) {
+                        const clue = document.createElement('p');
+                        clue.className = 'alert alert-info w-100';
+                        clue.innerText = `Clue ${i + 1}: ${question.clues[i]}`;
+                        questionTextElement.appendChild(clue);
+                    }
                 }
             } else if (question.parts) {
-                // Show the list of question parts
+                // Handle multi-part questions
                 question.parts.forEach((part, index) => {
                     const p = document.createElement('p');
                     p.innerText = `${index + 1}. ${part}`;
                     questionTextElement.appendChild(p);
                 });
             } else {
-                // Fallback for old questions
-                questionTextElement.innerText = question.text || "No text available";
+                // Fallback for standard text questions
+                questionTextElement.innerText = question.text || "New question started!";
             }
         }
 

@@ -33,15 +33,16 @@
     "answers": [
         {
             "id": 1,
-            "question_id": 1,
+            "question_id": 3,
             "text": [
-                "fffff"
+                "retre",
+                "hhhhh"
             ],
             "username": "Lodd",
             "avatar": "/static/avatars/3.webp",
             "votes": [],
-            "potential_points": 1,
-            "random_num": 554,
+            "potential_points": 3,
+            "random_num": 726,
             "visible": false,
             "is_correct": false
         }
@@ -52,7 +53,7 @@
         {
             "username": "Lodd",
             "avatar": "/static/avatars/3.webp",
-            "score": 0
+            "score": 12
         }
     ],
     "current_question": {

@@ -6,6 +6,8 @@ import os
 from datetime import timedelta
 from functools import wraps
 from dotenv import load_dotenv
+import math
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -52,6 +54,17 @@ def safe_file_operation(operation, *args, **kwargs):
     except (IOError, json.JSONDecodeError) as e:
         app.logger.error(f"File operation error: {str(e)}")
         return None
+    
+#helper
+def calculate_distance(lat1, lon1, lat2, lon2):
+    # Haversine formula to calculate distance in km
+    R = 6371 
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2)**2 + math.cos(math.radians(lat1)) * \
+        math.cos(math.radians(lat2)) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return round(R * c, 2)
 
 @app.route('/')
 @login_required
@@ -282,9 +295,9 @@ def submit_answer():
     curr_q = data.get('current_question', {})
     
     # Logic for decreasing point questions
-    points_at_submission = 1 # Default
+    points_at_submission = 3 # Default
     if curr_q.get('type') == 'decreasing':
-        points_at_submission = 5 - curr_q.get('current_clue_index', 0)
+        points_at_submission = 10 - 2*curr_q.get('current_clue_index', 0)
     
     answer_id = len(data['answers']) + 1
     data['answers'].append({
@@ -304,7 +317,7 @@ def submit_answer():
     return jsonify(success=True)
 
 
-@app.route('/vote', methods=['POST'])
+@app.route('/vote', methods=['POST']) #Legacy
 def vote():
     """Handles voting for an answer, ensuring unique votes by each user."""
     # Get the request data
@@ -350,7 +363,7 @@ def vote():
 
     return jsonify({"success": False, "message": "Failed to vote"}), 400
 
-@app.route('/add_question', methods=['POST'])
+@app.route('/add_question', methods=['POST']) #Legacy
 def add_question():
     """Adds a new question with a name and parts."""
     data = load_data()
@@ -368,7 +381,7 @@ def add_question():
         return jsonify(success=True)
     return jsonify(success=False, error="Name and parts are required")
 
-@app.route('/remove_question', methods=['POST'])
+@app.route('/remove_question', methods=['POST']) #Legacy
 def remove_question():
     """Removes a question by ID."""
     data = load_data()
@@ -426,42 +439,64 @@ def clear_votes():
 
 @app.route('/set_next_question', methods=['POST'])
 def set_next_question():
-    """Allows admin to set the next question and clears previous answers."""
-    question_id = int(request.json['question_id'])
+    """Allows admin to set the next question and resets the round."""
+    data_json = request.get_json()
+    
+    # Safely get question_id
+    raw_id = data_json.get('question_id')
+    if raw_id is None:
+        return jsonify(success=False, message="No question selected"), 400
+
+    try:
+        question_id = int(raw_id)
+    except (ValueError, TypeError):
+        return jsonify(success=False, message="Invalid question ID format"), 400
+
+    # Load data
     data = load_data()
     selected_question = next((q for q in data['questions'] if q['id'] == question_id), None)
 
     if selected_question:
+        # Update current question
         data['current_question'] = selected_question
         
-        # Clear votes AND answers for the new question
-        data['answers'] = [] 
+        # RESET ROUND DATA: Clear answers and reset reveal flag for the new question
+        data['answers'] = []
         data['reveal'] = False
         
+        # Reset current clue index if it's a decreasing point question
+        if selected_question.get('type') == 'decreasing':
+            data['current_question']['current_clue_index'] = 0
+            
         save_data(data)
-        
-        # Notify all clients to clear their UI
+
+        # Emit event to update all clients (players and admin)
         socketio.emit('next_question', {'question': selected_question})
         return jsonify(success=True, question=selected_question)
 
-    return jsonify(success=False, message="Question not found"), 404
+    return jsonify(success=False, message="Question not found in database"), 404
 
 @app.route('/next_clue', methods=['POST'])
 def next_clue():
     data = load_data()
     curr = data.get('current_question')
+    
     if curr and curr.get('type') == 'decreasing':
-        if curr['current_clue_index'] < 4: # Max 5 clues (0 to 4)
-            curr['current_clue_index'] += 1
+        # Increase the index (max 4 clues for 5 levels)
+        if curr.get('current_clue_index', 0) < 4:
+            curr['current_clue_index'] = curr.get('current_clue_index', 0) + 1
             save_data(data)
+            
+            # Notify everyone of the new clue
             socketio.emit('clue_update', {
                 'clue_index': curr['current_clue_index'],
                 'clue': curr['clues'][curr['current_clue_index']]
             })
-            return jsonify(success=True, clue_index=curr['current_clue_index'])
-    return jsonify(success=False)
+            return jsonify(success=True, clue_index=curr['current_clue_index'], current_question=curr)
+            
+    return jsonify(success=False, message="No more clues or wrong question type")
 
-@app.route('/reveal_votes_admin', methods=['POST'])
+@app.route('/reveal_votes_admin', methods=['POST']) #Legacy
 def reveal_votes_admin():
     """Admin endpoint to reveal all votes and calculate points."""
     data = load_data()
