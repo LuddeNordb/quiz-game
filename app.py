@@ -381,47 +381,38 @@ def remove_question():
 
 @app.route('/clear_data', methods=['POST'])
 def clear_data():
-    """Resets the game data while preserving user scores."""
-    # Read the current data
+    """Resets the game data while preserving user scores and question structures."""
     data = load_data()
-    
-    # Save the current users array
     current_users = data.get('users', [])
 
-    # Check if there are no questions in the current data
+    # If there are no questions, set up default ones using the NEW structure
     if not data.get('questions'):
-        # If no questions, set the initial data with default questions
-        initial_data = {
-            "questions": [
-                {"id": 1, "text": "What is your favorite color?"},
-                {"id": 2, "text": "What is your favorite animal?"}
-            ],
-            "answers": [],
-            "votes": [],
-            "reveal": False,
-            "users": current_users  # Preserve users array
-        }
-        save_data(initial_data)
-    else:
-        # If there are existing questions, reorder their IDs
-        reordered_questions = [
-            {"id": i + 1, "text": question['text']}
-            for i, question in enumerate(data['questions'])
+        initial_questions = [
+            {"id": 1, "name": "Colors", "parts": ["What is your favorite color?"]},
+            {"id": 2, "name": "Animals", "parts": ["What is your favorite animal?"]}
         ]
+    else:
+        # Reorder existing questions while preserving ALL their fields (name, parts, type, clues, etc.)
+        initial_questions = []
+        for i, q in enumerate(data['questions']):
+            new_q = q.copy() # Copy all existing fields
+            new_q['id'] = i + 1 # Just update the ID
+            initial_questions.append(new_q)
 
-        # Write the reordered data while preserving users
-        initial_data = {
-            "questions": reordered_questions,
-            "answers": [],
-            "votes": [],
-            "reveal": False,
-            "users": current_users  # Preserve users array
-        }
-        save_data(initial_data)
+    # Reconstruct the game state
+    initial_data = {
+        "questions": initial_questions,
+        "answers": [],
+        "votes": [],
+        "reveal": False,
+        "users": current_users,
+        "current_question": initial_questions[0] if initial_questions else None
+    }
+    
+    save_data(initial_data)
 
     # Emit the reset event to the clients
-    socketio.emit('game_reset', {'message': 'Game has been reset while preserving user scores.'})
-
+    socketio.emit('game_reset', {'message': 'Game has been reset.'})
     return jsonify(success=True)
 
 @app.route('/clear_votes', methods=['POST'])

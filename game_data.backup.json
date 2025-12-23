@@ -30,27 +30,37 @@
             "current_clue_index": 0
         }
     ],
-    "answers": [],
+    "answers": [
+        {
+            "id": 1,
+            "question_id": 1,
+            "text": [
+                "fffff"
+            ],
+            "username": "Lodd",
+            "avatar": "/static/avatars/3.webp",
+            "votes": [],
+            "potential_points": 1,
+            "random_num": 554,
+            "visible": false,
+            "is_correct": false
+        }
+    ],
     "votes": [],
     "reveal": false,
     "users": [
         {
-            "username": "rrrr",
+            "username": "Lodd",
             "avatar": "/static/avatars/3.webp",
             "score": 0
         }
     ],
     "current_question": {
-        "id": 3,
-        "name": "Mystery Object",
-        "type": "decreasing",
-        "clues": [
-            "It is found in a kitchen.",
-            "It is used for boiling water.",
-            "It whistles when ready.",
-            "It has a handle and a spout.",
-            "The name starts with 'K'."
-        ],
-        "current_clue_index": 0
+        "id": 2,
+        "name": "Favorite Animal Trivia",
+        "parts": [
+            "What is your favorite animal?",
+            "Does it have fur?"
+        ]
     }
 }
