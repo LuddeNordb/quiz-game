@@ -283,6 +283,22 @@
             .catch(error => console.error('Error fetching questions:', error));
     }
 
+        function nextClue() {
+            fetch('/next_clue', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire("Points Decreased", `Now worth ${5 - data.clue_index} points.`, "info");
+                }
+            });
+        }
+
+        // Show/hide clue button based on question type
+        socket.on('next_question', function(data) {
+            const clueBtn = document.getElementById('nextClueBtn');
+            clueBtn.style.display = data.question.type === 'decreasing' ? 'inline-block' : 'none';
+        });
+
 
 
         function toggleAnswerVisibility(answerId) {
@@ -954,6 +970,8 @@
 
                     Question</button>
 
+                <button id="nextClueBtn" class="btn btn-info btn-lg w-50" onclick="nextClue()" style="display: none;">Next Clue / Decrease Points</button>
+
             </div>
 
 
@@ -963,8 +981,6 @@
                 <button class="btn btn-primary btn-lg w-50 me-2" onclick="clearData(); setNextQuestion()">Set Next
 
                     Question</button>
-
-                <button class="btn btn-warning btn-lg w-50" onclick="revealVotes()">Reveal Votes</button>
 
             </div>
 

@@ -15,55 +15,42 @@
                 "What is your favorite animal?",
                 "Does it have fur?"
             ]
-        }
-    ],
-    "answers": [
-        {
-            "id": 1,
-            "question_id": 1,
-            "texts": [
-                "t",
-                "y"
-            ],
-            "username": "ss",
-            "avatar": "/static/avatars/7.webp",
-            "votes": [],
-            "random_num": 731,
-            "visible": true
         },
         {
-            "id": 2,
-            "question_id": 1,
-            "texts": [
-                "d",
-                "g"
+            "id": 3,
+            "name": "Mystery Object",
+            "type": "decreasing",
+            "clues": [
+                "It is found in a kitchen.",
+                "It is used for boiling water.",
+                "It whistles when ready.",
+                "It has a handle and a spout.",
+                "The name starts with 'K'."
             ],
-            "username": "gg",
-            "avatar": "/static/avatars/4.webp",
-            "votes": [],
-            "random_num": 940,
-            "visible": true
+            "current_clue_index": 0
         }
     ],
+    "answers": [],
     "votes": [],
     "reveal": false,
     "users": [
         {
-            "username": "gg",
-            "avatar": "/static/avatars/4.webp",
-            "score": 2
-        },
-        {
-            "username": "ss",
-            "avatar": "/static/avatars/7.webp",
-            "score": 2
+            "username": "rrrr",
+            "avatar": "/static/avatars/3.webp",
+            "score": 0
         }
     ],
     "current_question": {
-        "id": 1,
-        "parts": [
-            "What is your favorite color?",
-            "Why?"
-        ]
+        "id": 3,
+        "name": "Mystery Object",
+        "type": "decreasing",
+        "clues": [
+            "It is found in a kitchen.",
+            "It is used for boiling water.",
+            "It whistles when ready.",
+            "It has a handle and a spout.",
+            "The name starts with 'K'."
+        ],
+        "current_clue_index": 0
     }
 }

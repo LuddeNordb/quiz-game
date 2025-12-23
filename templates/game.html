@@ -528,14 +528,6 @@
 
                         <!-- Reveal button and vote button -->
 
-                        <button class="btn btn-light vote-btn" data-answer-id="${answer.id}" ${data.reveal ? 'disabled' : ''}>Vote</button>
-
-                        <div class="votes" id="votes-${answer.id}" style="display: ${data.reveal ? 'block' : 'none'};">
-
-                            Votes: ${answer.votes.join(', ')}
-
-                        </div>
-
                     </div>
 
                 `;
@@ -973,7 +965,16 @@
 
         });
 
-
+        socket.on('clue_update', function(data) {
+            const questionTextElement = document.getElementById('question-text');
+            const clueDiv = document.createElement('div');
+            clueDiv.className = 'alert alert-info mt-2';
+            clueDiv.innerText = `Clue ${data.clue_index + 1}: ${data.clue}`;
+            questionTextElement.appendChild(clueDiv);
+            
+            // Track current points locally for the UI
+            currentPointsAvailable = 5 - data.clue_index;
+        });
 
         socket.on('update_answers', function (data) {
 
@@ -1007,15 +1008,15 @@
     }
 
     fetch('/submit_answer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            answers: answers, 
-            username: userId, // Ensure userId is defined globally as it is now
-            question_id: currentQuestionId,
-            avatar: selectedAvatar
-        })
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        answer: answers, // Using 'answer' to match the backend
+        username: userId,
+        question_id: currentQuestionId,
+        avatar: selectedAvatar
     })
+})
     .then(response => response.json())
     .then(data => {
         if (data.success) {
@@ -1106,25 +1107,49 @@
 
 
         function loadCurrentQuestion() {
-
             fetch('/get_game_state')
-
                 .then(response => response.json())
-
                 .then(data => {
-
+                    const questionTextElement = document.getElementById('question-text');
                     if (data.current_question) {
-
-                        document.getElementById('question-text').innerText = data.current_question.text;
-
+                        // Use a helper function to render the question correctly
+                        renderQuestionUI(data.current_question);
                     } else {
-
-                        document.getElementById('question-text').innerText = "No question selected.";
-
+                        questionTextElement.innerText = "No question selected.";
                     }
-
                 });
+        }
 
+        function renderQuestionUI(question) {
+            const questionTextElement = document.getElementById('question-text');
+            questionTextElement.innerHTML = ''; 
+
+            // Always show the Question Name if it exists
+            if (question.name) {
+                const title = document.createElement('h3');
+                title.innerText = question.name;
+                questionTextElement.appendChild(title);
+            }
+
+            if (question.type === 'decreasing') {
+                // Show only the clues revealed so far
+                for (let i = 0; i <= question.current_clue_index; i++) {
+                    const clue = document.createElement('p');
+                    clue.className = 'alert alert-info';
+                    clue.innerText = `Clue ${i+1}: ${question.clues[i]}`;
+                    questionTextElement.appendChild(clue);
+                }
+            } else if (question.parts) {
+                // Show the list of question parts
+                question.parts.forEach((part, index) => {
+                    const p = document.createElement('p');
+                    p.innerText = `${index + 1}. ${part}`;
+                    questionTextElement.appendChild(p);
+                });
+            } else {
+                // Fallback for old questions
+                questionTextElement.innerText = question.text || "No text available";
+            }
         }
 
 

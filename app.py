@@ -271,31 +271,38 @@ def get_questions():
 
 @app.route('/submit_answer', methods=['POST'])
 def submit_answer():
-    # Expecting answers to be a list of strings
-    answer_parts = request.json['answers'] 
-    question_id = request.json['question_id']
-    avatar = request.json['avatar']
+    """Handles the submission of answers for all question types."""
+    # Use .get() to avoid KeyError if the frontend sends a different key name
+    answer_data = request.json.get('answer') or request.json.get('answers')
+    question_id = request.json.get('question_id')
+    avatar = request.json.get('avatar')
     username = session.get('username')
 
     data = load_data()
-    answer_id = len(data['answers']) + 1
+    curr_q = data.get('current_question', {})
     
+    # Logic for decreasing point questions
+    points_at_submission = 1 # Default
+    if curr_q.get('type') == 'decreasing':
+        points_at_submission = 5 - curr_q.get('current_clue_index', 0)
+    
+    answer_id = len(data['answers']) + 1
     data['answers'].append({
         "id": answer_id,
         "question_id": question_id,
-        "texts": answer_parts,  # Store as a list
+        "text": answer_data, # This will store the string or the list
         "username": username,
         "avatar": avatar,
         "votes": [],
+        "potential_points": points_at_submission,
         "random_num": random.randint(1, 1000),
-        "visible": False
+        "visible": False,
+        "is_correct": False
     })
 
     save_data(data)
     return jsonify(success=True)
 
-    save_data(data)
-    return jsonify(success=True)
 
 @app.route('/vote', methods=['POST'])
 def vote():
@@ -448,6 +455,21 @@ def set_next_question():
 
     return jsonify(success=False, message="Question not found"), 404
 
+@app.route('/next_clue', methods=['POST'])
+def next_clue():
+    data = load_data()
+    curr = data.get('current_question')
+    if curr and curr.get('type') == 'decreasing':
+        if curr['current_clue_index'] < 4: # Max 5 clues (0 to 4)
+            curr['current_clue_index'] += 1
+            save_data(data)
+            socketio.emit('clue_update', {
+                'clue_index': curr['current_clue_index'],
+                'clue': curr['clues'][curr['current_clue_index']]
+            })
+            return jsonify(success=True, clue_index=curr['current_clue_index'])
+    return jsonify(success=False)
+
 @app.route('/reveal_votes_admin', methods=['POST'])
 def reveal_votes_admin():
     """Admin endpoint to reveal all votes and calculate points."""
@@ -464,19 +486,9 @@ def reveal_votes_admin():
 
     # Calculate points based on votes
     for answer in data['answers']:
-        is_correct = answer.get('is_correct', False)
-        answer_username = answer['username']
-
-        # Process votes for this answer
-        for vote in answer.get('votes', []):
-            voter_username = vote['username']
-
-            if is_correct:
-                # Award 1 point to users who voted for the correct answer
-                update_user_points(voter_username, 1)
-            else:
-                # Award 2 points to the answer creator for each vote on their wrong answer
-                update_user_points(answer_username, 2)
+        if answer.get('is_correct'):
+            points = answer.get('potential_points', 1) # Use recorded level
+            update_user_points(answer['username'], points)
 
     save_data(data)
     socketio.emit('votes_revealed')

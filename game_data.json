@@ -15,30 +15,47 @@
                 "What is your favorite animal?",
                 "Does it have fur?"
             ]
+        },
+        {
+            "id": 3,
+            "name": "Mystery Object",
+            "type": "decreasing",
+            "clues": [
+                "It is found in a kitchen.",
+                "It is used for boiling water.",
+                "It whistles when ready.",
+                "It has a handle and a spout.",
+                "The name starts with 'K'."
+            ],
+            "current_clue_index": 0
         }
     ],
-    "answers": [
-    ],
+    "answers": [],
     "votes": [],
     "reveal": false,
     "users": [
         {
-            "username": "gg",
-            "avatar": "/static/avatars/4.webp",
-            "score": 2
+            "username": "rrrr",
+            "avatar": "/static/avatars/3.webp",
+            "score": 0
         },
         {
-            "username": "ss",
-            "avatar": "/static/avatars/7.webp",
-            "score": 2
+            "username": "wwww",
+            "avatar": "/static/avatars/5.webp",
+            "score": 0
         }
     ],
     "current_question": {
-        "id": 2,
-        "name": "Favorite Animal Trivia",
-        "parts": [
-            "What is your favorite animal?",
-            "Does it have fur?"
-        ]
+        "id": 3,
+        "name": "Mystery Object",
+        "type": "decreasing",
+        "clues": [
+            "It is found in a kitchen.",
+            "It is used for boiling water.",
+            "It whistles when ready.",
+            "It has a handle and a spout.",
+            "The name starts with 'K'."
+        ],
+        "current_clue_index": 0
     }
 }
