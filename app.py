@@ -428,23 +428,21 @@ def clear_votes():
 
 @app.route('/set_next_question', methods=['POST'])
 def set_next_question():
-    """Allows admin to set the next question."""
-    question_id = int(request.json['question_id']
-                      )  # Convert question_id to integer
-
-    # Load data and update the current question
+    """Allows admin to set the next question and clears previous answers."""
+    question_id = int(request.json['question_id'])
     data = load_data()
-    selected_question = next(
-        (q for q in data['questions'] if q['id'] == question_id), None)
+    selected_question = next((q for q in data['questions'] if q['id'] == question_id), None)
 
     if selected_question:
         data['current_question'] = selected_question
+        
+        # Clear votes AND answers for the new question
+        data['answers'] = [] 
+        data['reveal'] = False
+        
         save_data(data)
-
-        # Clear votes for the new question
-        clear_votes()  # Call the clear_votes function here
-
-        # Emit event to update clients
+        
+        # Notify all clients to clear their UI
         socketio.emit('next_question', {'question': selected_question})
         return jsonify(success=True, question=selected_question)
 
