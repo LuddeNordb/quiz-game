@@ -2,27 +2,49 @@
     "questions": [
         {
             "id": 1,
-            "name": "Favorite color",
+            "name": "Resa 1: Vart är vi på väg?",
+            "type": "decreasing",
+            "clues": [
+                "It is found in a kitchen.",
+                "It is used for boiling water.",
+                "It whistles when ready.",
+                "It has a handle and a spout.",
+                "The name starts with 'K'."
+            ],
+            "current_clue_index": 0,
+            "images": []
+        },
+        {
+            "id": 1,
+            "name": "Resa 1: Frågor #1",
             "parts": [
                 "What is your favorite color?",
                 "Why?"
-            ]
-        },
-        {
-            "id": 2,
-            "name": "Favorite Animal Trivia",
-            "parts": [
-                "What is your favorite animal?",
-                "Does it have fur?"
             ],
-            "images": [
-                "jeep.jpg",
-                "jeep.jpg"
-            ]
+            "images": []
         },
         {
-            "id": 3,
-            "name": "Mystery Object",
+            "id": 1,
+            "name": "Resa 1: Frågor #2",
+            "parts": [
+                "What is your favorite color?",
+                "Why?"
+            ],
+            "images": []
+        },
+        {
+            "id": 1,
+            "name": "Resa 1: Musikfrågor",
+            "parts": [
+                "What is your favorite color?",
+                "Why?",
+                "What is your favorite animal?"
+            ],
+            "images": []
+        },
+        {
+            "id": 1,
+            "name": "Resa 2: Vart är vi på väg?",
             "type": "decreasing",
             "clues": [
                 "It is found in a kitchen.",
@@ -34,44 +56,116 @@
             "current_clue_index": 0
         },
         {
+            "id": 1,
+            "name": "Resa 2: Frågor #1",
+            "parts": [
+                "What is your favorite color?",
+                "Why?"
+            ],
+            "images": []
+        },
+        {
+            "id": 1,
+            "name": "Resa 2: Frågor #2",
+            "parts": [
+                "What is your favorite color?",
+                "Why?"
+            ],
+            "images": []
+        },
+        {
             "id": 4,
-            "name": "Geography Challenge",
+            "name": "Vart är vi? #1",
             "type": "map",
-            "text": "Where is Paris located?",
+            "text": "placeholder text",
             "target_lat": 48.8566,
-            "target_lon": 2.3522
+            "target_lon": 2.3522,
+            "images": []
+        },
+        {
+            "id": 4,
+            "name": "Vart är vi? #2",
+            "type": "map",
+            "text": "placeholder text",
+            "target_lat": 48.8566,
+            "target_lon": 2.3522,
+            "images": []
+        },
+        {
+            "id": 4,
+            "name": "Vart är vi? #3",
+            "type": "map",
+            "text": "placeholder text",
+            "target_lat": 48.8566,
+            "target_lon": 2.3522,
+            "images": []
+        },
+        {
+            "id": 4,
+            "name": "Vart är vi? #4",
+            "type": "map",
+            "text": "placeholder text",
+            "target_lat": 48.8566,
+            "target_lon": 2.3522,
+            "images": []
+        },
+        {
+            "id": 1,
+            "name": "Resa 3: Vart är vi på väg?",
+            "type": "decreasing",
+            "clues": [
+                "It is found in a kitchen.",
+                "It is used for boiling water.",
+                "It whistles when ready.",
+                "It has a handle and a spout.",
+                "The name starts with 'K'."
+            ],
+            "current_clue_index": 0,
+            "images": []
+        },
+        {
+            "id": 1,
+            "name": "Resa 3: Frågor #1",
+            "parts": [
+                "What is your favorite color?",
+                "Why?"
+            ],
+            "images": []
+        },
+        {
+            "id": 1,
+            "name": "Resa 3: Frågor #2",
+            "parts": [
+                "What is your favorite color?",
+                "Why?"
+            ],
+            "images": []
+        },
+        {
+            "id": 1,
+            "name": "Resa 3: Musikfrågor",
+            "parts": [
+                "What is your favorite color?",
+                "Why?",
+                "What is your favorite animal?"
+            ],
+            "images": []
         }
     ],
     "answers": [
         {
             "id": 1,
             "question_id": 4,
-            "text": "3742.44 km away",
+            "text": "1569.96 km away",
             "coordinates": {
-                "lat": 20.46818922264095,
-                "lon": 24.9609375
+                "lat": 51.70320428462806,
+                "lon": 24.082031250000004
             },
             "username": "Lodd",
             "avatar": "/static/avatars/3.webp",
             "votes": [],
             "potential_points": 0,
-            "random_num": 148,
-            "visible": true,
-            "is_correct": false
-        },
-        {
-            "id": 2,
-            "question_id": 4,
-            "text": "4306.6 km away",
-            "coordinates": {
-                "lat": 61.33617468793348,
-                "lon": 70.13671875000001
-            },
-            "username": "rrrr",
-            "avatar": "/static/avatars/3.webp",
-            "votes": [],
-            "potential_points": 0,
-            "random_num": 175,
+            "random_num": 896,
             "visible": false,
             "is_correct": false
         }
@@ -81,10 +175,11 @@
     "users": [],
     "current_question": {
         "id": 4,
-        "name": "Geography Challenge",
+        "name": "Vart är vi? #1",
         "type": "map",
-        "text": "Where is Paris located?",
+        "text": "placeholder text",
         "target_lat": 48.8566,
-        "target_lon": 2.3522
+        "target_lon": 2.3522,
+        "images": []
     }
 }
