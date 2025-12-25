@@ -9,6 +9,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws:;">
+
     <meta name="description"
 
         content="Play Quiz Game - An exciting multiplayer game of deception and strategy. Join now and test your bluffing skills!">
@@ -260,7 +262,9 @@
 
     <script>
 
-        const socket = io.connect('http://localhost:5000');
+        const socket = io({
+            transports: ["websocket", "polling"]
+        });
 
         let answers = [];
         let allQuestions = [];

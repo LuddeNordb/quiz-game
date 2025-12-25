@@ -9,6 +9,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws:;">
+
     <meta name="description"
         content="På spåret quiz">
 
@@ -429,7 +431,11 @@
 
     <script>
 
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        //var socket = io.connect('http://' + document.domain + ':' + location.port);
+        const socket = io({
+            transports: ["websocket", "polling"],
+            secure: true
+        });
 
         var selectedAvatar = "{{ avatar }}";
 
@@ -1406,9 +1412,6 @@
 
 
     <script>
-
-        const socket = io.connect('http://localhost:5000');
-
 
 
         socket.on('next_question_cleared', () => {
