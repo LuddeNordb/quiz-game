@@ -27,6 +27,11 @@ body {
     border: 2px solid transparent;
 }
 
+.hard-shadow {
+    /* Syntax: h-shadow v-shadow blur-radius color */
+    text-shadow: 3px 3px 0px #00000083;
+  }
+
 .avatar-selection img.selected {
     border-color: #4CAF50;
 }

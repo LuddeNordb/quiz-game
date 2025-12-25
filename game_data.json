@@ -14,6 +14,10 @@
             "parts": [
                 "What is your favorite animal?",
                 "Does it have fur?"
+            ],
+            "images": [
+                "jeep.jpg",
+                "jeep.jpg"
             ]
         },
         {
@@ -41,17 +45,34 @@
     "answers": [
         {
             "id": 1,
-            "question_id": 3,
-            "text": [
-                "retre",
-                "hhhhh"
-            ],
+            "question_id": 4,
+            "text": "3742.44 km away",
+            "coordinates": {
+                "lat": 20.46818922264095,
+                "lon": 24.9609375
+            },
             "username": "Lodd",
             "avatar": "/static/avatars/3.webp",
             "votes": [],
-            "potential_points": 3,
-            "random_num": 726,
+            "potential_points": 0,
+            "random_num": 148,
             "visible": true,
+            "is_correct": false
+        },
+        {
+            "id": 2,
+            "question_id": 4,
+            "text": "4306.6 km away",
+            "coordinates": {
+                "lat": 61.33617468793348,
+                "lon": 70.13671875000001
+            },
+            "username": "rrrr",
+            "avatar": "/static/avatars/3.webp",
+            "votes": [],
+            "potential_points": 0,
+            "random_num": 175,
+            "visible": false,
             "is_correct": false
         }
     ],
@@ -59,17 +80,17 @@
     "reveal": false,
     "users": [
         {
-            "username": "Lodd",
-            "avatar": "/static/avatars/3.webp",
-            "score": 12
+            "username": "dfsdfsd",
+            "avatar": "/static/avatars/5.webp",
+            "score": 0
         }
     ],
     "current_question": {
-        "id": 2,
-        "name": "Favorite Animal Trivia",
-        "parts": [
-            "What is your favorite animal?",
-            "Does it have fur?"
-        ]
+        "id": 4,
+        "name": "Geography Challenge",
+        "type": "map",
+        "text": "Where is Paris located?",
+        "target_lat": 48.8566,
+        "target_lon": 2.3522
     }
 }

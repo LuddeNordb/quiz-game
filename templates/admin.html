@@ -67,7 +67,7 @@
 
 
 
-    <title>Quiz Game - Admin Panel</title>
+    <title>På spåret - Admin Panel</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -81,7 +81,10 @@
 
         }
 
-
+        .hard-shadow {
+    /* Syntax: h-shadow v-shadow blur-radius color */
+    text-shadow: 3px 3px 0px #00000052;
+  }
 
         /* You can also customize other parts of the alert, if needed */
 
@@ -455,6 +458,10 @@
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            const q = data.question;
+            // Update button visibility immediately
+            document.getElementById('revealMapBtn').style.display = (q.type === 'map') ? 'inline-block' : 'none';
+            document.getElementById('nextClueBtn').style.display = (q.type === 'decreasing') ? 'inline-block' : 'none';
             // Trigger the UI update immediately for the admin
             updateAdminQuestionDisplay(data.question);
             
@@ -951,10 +958,14 @@
             .then(r => r.json())
             .then(data => {
                 if (data.current_question) {
-                    updateAdminQuestionDisplay(data.current_question);
-                    // Also toggle the Next Clue button if necessary
-                    const clueBtn = document.getElementById('nextClueBtn');
-                    if (data.current_question.type === 'decreasing') clueBtn.style.display = 'inline-block';
+                    const q = data.current_question;
+                    const revealMapBtn = document.getElementById('revealMapBtn');
+                    const nextClueBtn = document.getElementById('nextClueBtn');
+                    
+                    if (revealMapBtn) revealMapBtn.style.display = (q.type === 'map') ? 'inline-block' : 'none';
+                    if (nextClueBtn) nextClueBtn.style.display = (q.type === 'decreasing') ? 'inline-block' : 'none';
+                    
+                    updateAdminQuestionDisplay(q);
                 }
                 answers = data.answers || [];
                 updatePage();
@@ -990,7 +1001,7 @@
 
 
 
-        <h1 class="text-center mb-5 text-light">Admin Control Panel</h1>
+        <h1 class="text-center mb-5 text-light hard-shadow">Admin Control Panel</h1>
 
 
 
@@ -1009,6 +1020,35 @@
                 <button id="nextClueBtn" class="btn btn-info btn-lg w-50" onclick="nextClue()" style="display: none;">Next Clue / Decrease Points</button>
 
                 <button class="btn btn-primary btn-lg w-50 me-2" onclick="setNextQuestion()">Set Next Question</button>
+
+                <button id="revealMapBtn" class="btn btn-warning btn-lg w-50" onclick="revealMapTarget()" style="display: none;">Reveal Correct Location</button>
+
+                <script>
+                function revealMapTarget() {
+                    fetch('/reveal_correct_location', { method: 'POST' });
+                }
+
+                // Show button only if map question
+                socket.on('next_question', function(data) {
+                const question = data.question;
+                const revealMapBtn = document.getElementById('revealMapBtn');
+                const nextClueBtn = document.getElementById('nextClueBtn');
+
+                // Show/Hide buttons based on question type
+                if (question.type === 'map') {
+                    revealMapBtn.style.display = 'inline-block';
+                    nextClueBtn.style.display = 'none';
+                } else if (question.type === 'decreasing') {
+                    revealMapBtn.style.display = 'none';
+                    nextClueBtn.style.display = 'inline-block';
+                } else {
+                    revealMapBtn.style.display = 'none';
+                    nextClueBtn.style.display = 'none';
+                }
+                
+                updateAdminQuestionDisplay(question);
+            });
+                </script>
 
             </div>
 

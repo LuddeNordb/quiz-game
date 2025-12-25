@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>På spåret</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .scoreboard-entry { border-bottom: 1px solid #333; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .scoreboard-entry:last-child { border-bottom: none; }
+        .points-badge { background-color: #0d6efd; border-radius: 20px; padding: 5px 15px; font-weight: bold; }
+        #map-viewer { height: 400px; border-radius: 10px; display: none; margin-top: 15px; }
+        .answer-card { border-left: 5px solid #198754; transition: all 0.3s; }
+        .clue-item { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Inside templates/viewer.html */
+    body { 
+        color: white; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        background-image: url('../static/img/bg.webp');
+        background-size: cover;
+        /* Keeps the image from scrolling away when you move down the page */
+        background-attachment: fixed;
+        
+        background-position: center center;
+        background-repeat: no-repeat;
+        
+        /* Overlay color */
+        background-color: rgba(0, 0, 0, 0.175);
+        
+    }
+
+    .hard-shadow {
+    /* Syntax: h-shadow v-shadow blur-radius color */
+    text-shadow: 2px 2px 0px #00000052;
+  }
+
+    /* Standard Card Styling */
+    .card { 
+        background-color: #1e1e1e; 
+        border: 1px solid #333; 
+        color: white; 
+        margin-bottom: 20px; 
+        border-radius: 15px;
+    }
+
+    /* Match the Alert-Info style from the player page */
+    .alert-info {
+        --bs-alert-bg: #1a1a1a;
+        --bs-alert-border-color: #0dcaf0;
+        --bs-alert-color: #ffffff;
+        border-width: 4px !important;
+        border-style: solid !important;
+        border-radius: 12px !important;
+        padding: 1.25rem !important;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Scoreboard styling */
+    .scoreboard-entry { 
+        border-bottom: 1px solid #333; 
+        padding: 12px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+    }
+    
+    .points-badge { 
+        background-color: #0d6efd; 
+        border-radius: 20px; 
+        padding: 5px 15px; 
+        font-weight: bold; 
+        box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
+    }
+    .alert-info {
+        --bs-alert-border-color: rgb(252, 159, 210); 
+        border-width: 2px !important;
+    }
+
+
+    /* Image Gallery Styling */
+    #image-gallery img {
+        border-radius: 10px;
+        border: 1px solid #444;
+        max-height: 250px;
+        object-fit: contain;
+    }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid p-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card p-4 shadow">
+                <h2 id="question-name" class="hard-shadow">Väntar...</h2>
+                <div id="image-gallery" class="row g-2 mb-3 justify-content-center"></div>
+                <hr>
+                <div id="question-content" class="fs-4"></div>
+                <div id="map-viewer"></div>
+            </div>
+
+            <h3 class="mt-4 mb-3 hard-shadow">Era Svar</h3>
+            <div id="answers-list" class="row">
+                </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card p-4 shadow">
+                <h3 class="text-center text-warning mb-4">🏆 Poängställning</h3>
+                <div id="scoreboard-list">
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const socket = io();
+    let viewerMap;
+    let targetMarker;
+
+    let playerMarkers = []; // Array to keep track of player markers
+
+    socket.on('show_target_location', function(targetData) {
+        if (!viewerMap) return;
+
+        // 1. Clear any existing markers from previous reveals
+        playerMarkers.forEach(m => viewerMap.removeLayer(m));
+        playerMarkers = [];
+        if (targetMarker) viewerMap.removeLayer(targetMarker);
+
+        // 2. Fetch the current state to get all coordinates
+        fetch('/get_game_state')
+            .then(res => res.json())
+            .then(data => {
+                data.answers.forEach(ans => {
+                    if (ans.coordinates) {
+                        // Create a standard marker for each player
+                        const m = L.marker([ans.coordinates.lat, ans.coordinates.lon])
+                            .addTo(viewerMap)
+                            .bindTooltip(ans.username, { permanent: true, direction: 'top' });
+                        playerMarkers.push(m);
+                    }
+                });
+
+                // 3. Place the Correct (Gold) Marker
+                const goldIcon = new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41]
+                });
+                targetMarker = L.marker([targetData.lat, targetData.lon], {icon: goldIcon}).addTo(viewerMap);
+                //targetMarker.bindPopup("<b>Correct Location!</b>").openPopup();
+
+                // 4. Zoom the map to fit all markers
+                const group = new L.featureGroup([targetMarker, ...playerMarkers]);
+                viewerMap.fitBounds(group.getBounds().pad(0.1));
+            });
+    });
+
+    function renderImages(images) {
+        const gallery = document.getElementById('image-gallery');
+        gallery.innerHTML = ''; // Clear existing
+        
+        if (images && images.length > 0) {
+            images.forEach(imgName => {
+                const col = document.createElement('div');
+                // Adjust column size based on number of images
+                col.className = images.length === 1 ? 'col-12' : 'col-6 col-md-4';
+                
+                col.innerHTML = `
+                    <div class="card bg-dark border-secondary">
+                        <img src="/static/images/${imgName}" 
+                            class="card-img-top img-fluid rounded shadow-sm" 
+                            style="max-height: 300px; object-fit: contain; padding: 5px;"
+                            onclick="window.open(this.src, '_blank')"
+                            alt="Question Image">
+                    </div>`;
+                gallery.appendChild(col);
+            });
+            gallery.style.display = 'flex';
+        } else {
+            gallery.style.display = 'none';
+        }
+    }
+
+    function initViewerMap() {
+        if (viewerMap) return;
+        viewerMap = L.map('map-viewer').setView([20, 0], 2);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; CARTO'
+        }).addTo(viewerMap);
+    }
+
+    function updateScoreboard() {
+    fetch('/get_game_state')
+        .then(res => res.json())
+        .then(data => {
+            const sbList = document.getElementById('scoreboard-list');
+            sbList.innerHTML = '';
+            
+            // 1. Safety check for users array
+            const users = data.users || [];
+
+            // 2. Sort users by points (handling potential undefined values)
+            const sortedUsers = [...users].sort((a, b) => {
+                const pointsA = a.score || 0;
+                const pointsB = b.score || 0;
+                return pointsB - pointsA;
+            });
+
+            // 3. Render the list
+            sortedUsers.forEach(user => {
+                const displayPoints = user.score !== undefined ? user.score : 0;
+                sbList.innerHTML += `
+                    <div class="scoreboard-entry fs-5">
+                        <span>${user.username}</span>
+                        <span class="points-badge">${displayPoints} pts</span>
+                    </div>`;
+            });
+
+                // Render Answers
+                const ansList = document.getElementById('answers-list');
+                ansList.innerHTML = ''; 
+                data.answers.filter(a => a.visible).forEach(ans => {
+                    const ansText = Array.isArray(ans.text) ? ans.text.join(', ') : ans.text;
+                    const pointsDisplay = (ans.potential_points > 0) ? `<strong>${ans.potential_points}:</strong> ` : "";
+                    ansList.innerHTML += `
+                        <div class="col-md-6 mb-3">
+                            <div class="card answer-card p-3 h-100">
+                                <div class="">${ans.username}</div>
+                                <div class="fs-5">${pointsDisplay}${ansText}</div>
+                            </div>
+                        </div>`;
+                });
+            });
+    }
+
+    function renderQuestion(question) {
+        const nameEl = document.getElementById('question-name');
+        const contentEl = document.getElementById('question-content');
+        const mapEl = document.getElementById('map-viewer');
+
+        nameEl.innerText = question.name || "Question";
+        contentEl.innerHTML = '';
+
+        if (question.type === 'map') {
+            mapEl.style.display = 'block';
+            contentEl.innerHTML = `<p>${question.text}</p>`;
+            setTimeout(() => { initViewerMap(); viewerMap.invalidateSize(); }, 200);
+        } else if (question.type === 'decreasing') {
+            mapEl.style.display = 'none';
+            for (let i = 0; i <= (question.current_clue_index || 0); i++) {
+                contentEl.innerHTML += `<div class="alert clue-item fs-5 alert-info">${10-i*2}: ${question.clues[i]}</div>`;
+            }
+        } else if (question.parts) {
+            mapEl.style.display = 'none';
+            question.parts.forEach((p, i) => {
+                contentEl.innerHTML += `<p>${i+1}. ${p}</p>`;
+            });
+        }
+    }
+
+    // Socket listeners
+    socket.on('next_question', (data) => {
+    // Clear the map markers
+    if (viewerMap) {
+        playerMarkers.forEach(m => viewerMap.removeLayer(m));
+        playerMarkers = [];
+        if (targetMarker) viewerMap.removeLayer(targetMarker);
+        viewerMap.setView([20, 0], 2);
+    }
+    renderQuestion(data.question);
+    updateScoreboard();
+    renderImages(data.question.images);
+});
+    socket.on('clue_update', () => { 
+        fetch('/get_game_state').then(res => res.json()).then(data => renderQuestion(data.current_question));
+    });
+    socket.on('reveal_answers', updateScoreboard);
+    socket.on('points_updated', updateScoreboard);
+
+    // Initial Load
+    window.onload = () => {
+        fetch('/get_game_state').then(res => res.json()).then(data => {
+            if (data.current_question) {
+                renderQuestion(data.current_question);
+                renderImages(data.current_question.images);
+            }
+            updateScoreboard();
+            
+        });
+        setInterval(updateScoreboard, 3000); // Periodic fallback sync
+    };
+</script>
+</body>
+</html>

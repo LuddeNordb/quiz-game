@@ -10,14 +10,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-        content="Play Quiz Game - An exciting multiplayer game of deception and strategy. Join now and test your bluffing skills!">
+        content="På spåret quiz">
 
     <meta name="keywords"
-        content="Quiz Game, online game, multiplayer game, poker game, bluffing game, strategy game">
+        content="Quiz Game, På spåret">
 
-    <meta name="author" content="KF Game">
+    <meta name="author" content="LN">
 
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <!-- Open Graph / Facebook -->
 
@@ -25,9 +26,9 @@
 
     <meta property="og:url" content="https:/you-website-link/">
 
-    <meta property="og:title" content="Quiz Game - Online Multiplayer Game">
+    <meta property="og:title" content="På spåret">
 
-    <meta property="og:description" content="Join the exciting world of Quiz Game - where strategy meets deception!">
+    <meta property="og:description" content="På spåret quiz">
 
     <meta property="og:image" content="https:/you-website-link/static/img/logo.webp">
 
@@ -39,10 +40,10 @@
 
     <meta property="twitter:url" content="https:/you-website-link/">
 
-    <meta property="twitter:title" content="Quiz Game - Online Multiplayer Game">
+    <meta property="twitter:title" content="På spåret">
 
     <meta property="twitter:description"
-        content="Join the exciting world of Quiz Game - where strategy meets deception!">
+        content="På spåret">
 
     <meta property="twitter:image" content="https:/you-website-link/static/img/logo.webp">
 
@@ -52,10 +53,10 @@
 
     <meta name="twitter:card" content="summary_large_image">
 
-    <meta name="twitter:title" content="Quiz Game - Multiplayer Card Game">
+    <meta name="twitter:title" content="På spåret">
 
     <meta name="twitter:description"
-        content="Join Quiz Game for exciting multiplayer card games with friends and test your bluffing skills.">
+        content="På spåret">
 
     <meta name="twitter:image" content="{{ url_for('static', filename='fav/logo.png') }}">
 
@@ -63,7 +64,7 @@
 
 
 
-    <title>Quiz Game - Multiplayer Game</title>
+    <title>På spåret</title>
 
 
 
@@ -138,7 +139,7 @@
 
         .avatar-selection img.selected {
 
-            border: 3px solid #007bff;
+            border: 3px solid #ffa9fa;
 
         }
 
@@ -160,13 +161,64 @@
 
         }
 
+        .btn-custom {
+        display: inline-block;
+        outline: 0;
+        border: 0;
+        font-size: 20px;
+        font-weight: 500;
+        color: #fff;
+        cursor: pointer;
+        background-image: linear-gradient(to right,#e052a0,#f15c41)!important;
+        border-radius: 3px;
+        padding: 16px 18px 15px;
+        white-space: nowrap;
+        }
+
+        .btn-custom:hover {
+            background-color: #e6375a;
+            background-image: none!important;
+        }
+
+        .btn-logoout {
+            display: inline-block;
+            outline: 0;
+            border:0;
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            color: rgb(246, 84, 174);
+            background: #fff;
+            line-height: 30px;
+            border-radius: 40px;
+            width: 150px;
+            padding: 5px;
+            font-size: 17px;
+            font-weight: 600;
+            box-shadow: rgb(255, 198, 0) -2px -2px 0px 2px, rgb(246, 84, 174) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 0px 2px 7px;
+            transition: all 0.2s;
+        }
+        .btn-logoout:hover{
+            box-shadow: rgb(246, 84, 174) -2px -2px 0px 2px, rgb(255, 198, 0) 0px 0px 0px 4px, rgba(0, 0, 0, 0.05) 0px 0px 2px 7px;
+            transform: scale(1.01);
+        }
+        .alert-info {
+        --bs-alert-bg: linear-gradient(to right,#e052a0,#f15c41)!important;
+        --bs-alert-border-color: rgb(246, 84, 174); 
+        --bs-alert-color: rgb(255, 255, 255);   /* Change text color */
+        border-width: 3px;
+        }
+                    
+
+                
+
 
 
         .form-control {
 
             color: #9C9C9C !important;
 
-            background-color: #2F2F2F;
+            background-color: #ffffff;
 
             border: 1px solid transparent;
 
@@ -178,7 +230,7 @@
 
             color: #9C9C9C !important;
 
-            background-color: #2F2F2F;
+            background-color: #ffffff;
 
             border: 1px solid transparent;
 
@@ -190,7 +242,7 @@
 
             color: #FFFFFF;
 
-            background-color: #3F3F3F;
+            background-color: #e7e6e6;
 
         }
 
@@ -198,7 +250,7 @@
 
         .form-control:hover {
 
-            background-color: #444444;
+            background-color: #e9e9e9;
 
         }
 
@@ -222,14 +274,20 @@
 
         body {
 
-            position: relative;
+            min-height: 100vh;
+            margin: 0;
 
             background-image: url('../static/img/bg.webp');
 
             background-size: cover;
-
+                
+            /* Keeps the image from scrolling away when you move down the page */
+            background-attachment: fixed;
+            
+            background-position: center center;
             background-repeat: no-repeat;
-
+            
+            /* Overlay color */
             background-color: rgba(0, 0, 0, 0.175);
 
         }
@@ -257,6 +315,11 @@
             margin-left: auto;
 
         }
+
+        .hard-shadow {
+    /* Syntax: h-shadow v-shadow blur-radius color */
+    text-shadow: 2px 2px 0px #00000052;
+  }
     </style>
 
 </head>
@@ -293,31 +356,29 @@
                         {% endif %}
                     </label>
                 </h2>
-                <form action="/logout" method="POST" class="mt-2  justify-content-between align-items-center">
-                    <button type="submit" class="btn btn-danger">Logout</button>
-                </form>
+
             </div>
         </div>
 
 
         <div class="row mb-3">
 
-
-
         </div>
 
+        <div id="image-gallery" class="row g-2 mb-3 justify-content-center"></div>
+
         <div class="d-flex justify-content-center align-items-center">
-            <h2 id="question-text" class="text-white" style="
+            <h2 id="question-text" class="text-white hard-shadow" style="
                        border-radius: 30px; 
                        padding: 15px; 
                        max-width: 80%; 
                        text-align: center; ">
-                Loading question...
+                Laddar frågor...
             </h2>
         </div>
 
 
-
+        <div id="map-container" style="display: none; height: 400px; width: 100%; border-radius: 10px; margin-bottom: 20px;"></div>
 
         <div class="container mt-5">
 
@@ -326,13 +387,15 @@
                 <div class="col-md-12">
 
                     <div class="mb-3">
-                        <label class="form-label text-color">Your Answer(s)</label>
+                                    
                         <div id="answerInputsContainer">
-                            <input type="text" class="form-control form-control-lg part-input" placeholder="Loading..." />
+                            <input type="text" class="form-control form-control-lg part-input" id="answerInput" placeholder="Skriv in dina svar" />
                         </div>
+                    
+                        <div id="map-container" style="display: none; height: 400px; width: 100%; border-radius: 10px; margin-bottom: 20px; border: 1px solid #444;"></div>
                     </div>
 
-                    <button id="submitAnswer" class="btn btn-lg btn-success w-100">Submit Answer</button>
+                    <button id="submitAnswer" class="btn btn-lg btn-custom w-100">Lås in</button>
 
                 </div>
 
@@ -348,7 +411,7 @@
 
         <div class="container mt-4">
 
-            <h2 class="text-center text-light mb-4">Scoreboard</h2>
+            <h2 class="text-center text-light hard-shadow mb-4">Poängställning</h2>
 
             <div id="users" class="row justify-content-center"></div>
 
@@ -375,6 +438,12 @@
         var userId = "{{ username }}"; // Get the username from the Flask session
 
         let currentQuestionId = 1;
+
+        let playerMap;
+
+        let playerMarker;
+
+        let currentQuestionType = 'standard'; 
 
 
 
@@ -430,6 +499,32 @@
 
         });
 
+        function renderImages(images) {
+            const gallery = document.getElementById('image-gallery');
+            gallery.innerHTML = ''; // Clear existing
+            
+            if (images && images.length > 0) {
+                images.forEach(imgName => {
+                    const col = document.createElement('div');
+                    // Adjust column size based on number of images
+                    col.className = images.length === 1 ? 'col-12' : 'col-6 col-md-4';
+                    
+                    col.innerHTML = `
+                        <div class="card bg-dark border-secondary">
+                            <img src="/static/images/${imgName}" 
+                                class="card-img-top img-fluid rounded shadow-sm" 
+                                style="max-height: 300px; object-fit: contain; padding: 5px;"
+                                onclick="window.open(this.src, '_blank')"
+                                alt="Question Image">
+                        </div>`;
+                    gallery.appendChild(col);
+                });
+                gallery.style.display = 'flex';
+            } else {
+                gallery.style.display = 'none';
+            }
+        }
+
         function fetchUsers() {
 
             fetch('/get_users') // Adjust this endpoint to match your backend route
@@ -462,7 +557,7 @@
 
                                  class="rounded-circle mb-3" style="width: 50px; height: 50px;">
 
-                            <p class="card-text"><strong>Score:</strong> ${user.score}</p>
+                            <p class="card-text"><strong>Poäng:</strong> ${user.score}</p>
 
                         </div>
 
@@ -478,6 +573,36 @@
 
                 .catch(error => console.error('Error fetching users:', error));
 
+        }
+
+        function initMap() {
+            if (playerMap) {
+                // RE-ENABLE all interactions for the new round
+                playerMap.dragging.enable();
+                playerMap.touchZoom.enable();
+                playerMap.doubleClickZoom.enable();
+                playerMap.scrollWheelZoom.enable();
+                if (playerMap.tap) playerMap.tap.enable(); // For mobile support
+                
+                playerMap.invalidateSize();
+                return;
+            }
+            
+            playerMap = L.map('map-container').setView([20, 0], 2);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO'
+            }).addTo(playerMap);
+
+            playerMap.on('click', function(e) {
+                if (document.getElementById('submitAnswer').disabled) return;
+
+                if (playerMarker) {
+                    playerMarker.setLatLng(e.latlng);
+                } else {
+                    playerMarker = L.marker(e.latlng).addTo(playerMap);
+                }
+            });
         }
 
         function loadAnswers() {
@@ -508,7 +633,7 @@
                         answerDiv.classList.add('col-md-12', 'card', 'mt-3');
 
                         let displayHeader = "";
-                        if (answer.potential_points !== undefined) {
+                        if (answer.potential_points !== undefined && answer.potential_points > 0) {
                             displayHeader = `<strong>${answer.potential_points}</strong>: ${answer.username}`;
                         } else {
                             displayHeader = `${answer.username}`;
@@ -667,11 +792,31 @@
 
         }
 
+        let targetMarker;
 
+        socket.on('show_target_location', function(data) {
+            if (playerMap) {
+                const goldIcon = new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41]
+                });
+
+                if (targetMarker) playerMap.removeLayer(targetMarker);
+                targetMarker = L.marker([data.lat, data.lon], {icon: goldIcon}).addTo(playerMap);
+                //targetMarker.bindPopup("Correct Answer").openPopup();
+            }
+        });
 
         socket.on('next_question', function (data) {
+            if (targetMarker && playerMap) {
+                playerMap.removeLayer(targetMarker);
+                targetMarker = null;
+            }
             // 1. Render the new question structure
             renderQuestionUI(data.question);
+            setupAnswerUI(data.question);
+            renderImages(data.question.images);
 
             // 2. Clear inputs
             const container = document.getElementById('answerInputsContainer');
@@ -682,7 +827,7 @@
                     const input = document.createElement('input');
                     input.type = 'text';
                     input.className = 'form-control form-control-lg mb-3 part-input';
-                    input.placeholder = "Enter your guess here...";
+                    input.placeholder = "Skriv svaret här...";
                     container.appendChild(input);
                 } else if (data.question.parts) {
                     // Re-create inputs for parts
@@ -690,7 +835,7 @@
                         const input = document.createElement('input');
                         input.type = 'text';
                         input.className = 'form-control form-control-lg mb-3 part-input';
-                        input.placeholder = `Answer for part ${index + 1}...`;
+                        input.placeholder = `Svar för fråga ${index + 1}...`;
                         container.appendChild(input);
                     });
                 }
@@ -756,7 +901,7 @@
                         answerDiv.classList.add('col-sm-12', 'col-md-12', 'col-12', 'col-lg-6', 'mb-4');
 
                         let displayHeader = "";
-                        if (answer.potential_points !== undefined) {
+                        if (answer.potential_points !== undefined && answer.potential_points > 0) {
                             displayHeader = `<strong>${answer.potential_points}</strong>: ${answer.username}`;
                         } else {
                             displayHeader = `${answer.username}`;
@@ -942,7 +1087,7 @@
             const questionTextElement = document.getElementById('question-text');
             const clueDiv = document.createElement('div');
             clueDiv.className = 'alert alert-info mt-2';
-            clueDiv.innerText = `Clue ${data.clue_index + 1}: ${data.clue}`;
+            clueDiv.innerText = `${10 - data.clue_index*2}: ${data.clue}`;
             questionTextElement.appendChild(clueDiv);
             
             // Track current points locally for the UI
@@ -970,40 +1115,52 @@
         });
 
 
-        document.getElementById('submitAnswer').addEventListener('click', function () {
-    const inputs = document.querySelectorAll('.part-input');
-    const answers = Array.from(inputs).map(input => input.value);
+    document.getElementById('submitAnswer').addEventListener('click', function () {
+    let finalAnswer;
 
-    // Validation: Ensure all parts have an answer
-    if (answers.some(a => !a.trim())) {
-        Swal.fire({ title: "Oops!", text: "Please answer all parts!", icon: "warning" });
-        return;
+    // Check if we are in Map Mode
+    if (currentQuestionType === 'map') {
+        if (!playerMarker) {
+            Swal.fire({ title: "Wait!", text: "You need to place a marker on the map first!", icon: "warning" });
+            return;
+        }
+        // Get the lat/lng from the Leaflet marker
+        const position = playerMarker.getLatLng();
+        finalAnswer = { lat: position.lat, lon: position.lng };
+    } else {
+        // Handle standard or multi-part questions
+        const inputs = document.querySelectorAll('.part-input');
+        finalAnswer = Array.from(inputs).map(input => input.value);
+        
+        if (finalAnswer.length === 0 || (finalAnswer.length === 1 && !finalAnswer[0].trim())) {
+            Swal.fire({ title: "Oops!", text: "Please enter an answer!", icon: "warning" });
+            return;
+        }
     }
 
+    // Send the data to the server
     fetch('/submit_answer', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        answer: answers, // Using 'answer' to match the backend
-        username: userId,
-        question_id: currentQuestionId,
-        avatar: selectedAvatar
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            answer: finalAnswer,
+            username: userId,
+            question_id: currentQuestionId,
+            avatar: selectedAvatar
+        })
     })
-})
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            Swal.fire({ title: "Good job!", text: "Answers submitted!", icon: "success" });
-            
-            // Corrected: Disable the submit button
+            Swal.fire({ title: "Submitted!", text: "Your guess has been recorded.", icon: "success" });
             document.getElementById('submitAnswer').disabled = true;
-
-            // Corrected: Disable avatar selection
-            const avatarContainer = document.getElementById('avatarSelection');
-            if (avatarContainer) {
-                avatarContainer.querySelectorAll('img').forEach(img => {
-                    img.style.pointerEvents = 'none';
-                });
+            
+            // Disable map interaction after submission
+            if (playerMap) {
+                playerMap.dragging.disable();
+                playerMap.touchZoom.disable();
+                playerMap.doubleClickZoom.disable();
+                playerMap.scrollWheelZoom.disable();
             }
         }
     });
@@ -1087,7 +1244,7 @@
                     if (data.current_question) {
                         // Use the rendering helper to set up the text and clues
                         renderQuestionUI(data.current_question);
-                        
+                        renderImages(data.current_question.images);
                         // Set up the correct number of input boxes immediately
                         setupAnswerInputs(data.current_question);
                         
@@ -1099,41 +1256,87 @@
                 });
         }
 
+        function setupAnswerUI(question) {
+    currentQuestionType = question.type;
+    currentQuestionId = question.id;
+    
+    const inputContainer = document.getElementById('answerInputsContainer');
+    const mapContainer = document.getElementById('map-container');
+    const label = document.getElementById('answer-label');
+
+    // Reset Submit Button
+    document.getElementById('submitAnswer').disabled = false;
+
+    if (question.type === 'map') {
+        if (inputContainer) inputContainer.style.display = 'none';
+        if (mapContainer) mapContainer.style.display = 'block';
+        if (label) label.innerText = "Click the map to place your marker:";
+        
+        if (playerMarker && playerMap) {
+            playerMap.removeLayer(playerMarker);
+            playerMarker = null;
+        }
+
+        setTimeout(() => {
+            initMap();
+            playerMap.invalidateSize();
+            playerMap.setView([20, 0], 2);
+        }, 300);
+    } 
+    else {
+        // Switch to Text Mode
+        if (inputContainer) inputContainer.style.display = 'block';
+        if (mapContainer) mapContainer.style.display = 'none';
+        if (label) label.innerText = "Your Answer(s):";
+        
+        // Rebuild the input boxes for parts/standard
+        setupAnswerInputs(question);
+    }
+}
+
         function setupAnswerInputs(question) {
             const container = document.getElementById('answerInputsContainer');
             if (!container) return;
 
-            container.innerHTML = ''; // Clear the default single box
+            container.innerHTML = ''; // Clear old inputs
 
             if (question.type === 'decreasing') {
-                // Decreasing point questions only need one input box
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.className = 'form-control form-control-lg mb-3 part-input';
-                input.placeholder = "Enter your guess here...";
+                input.placeholder = "Enter your guess...";
                 container.appendChild(input);
-            } else if (question.parts && question.parts.length > 0) {
-                // Create an input for every part defined in the question
+            } 
+            else if (question.parts && question.parts.length > 0) {
+                // Handle multi-part questions
                 question.parts.forEach((part, index) => {
+                    const label = document.createElement('p');
+                    label.className = 'text-muted small mb-1 mt-2';
+                    label.innerText = `Part ${index + 1}: ${part}`;
+                    
                     const input = document.createElement('input');
                     input.type = 'text';
                     input.className = 'form-control form-control-lg mb-3 part-input';
-                    input.placeholder = `Answer for part ${index + 1}...`;
+                    input.placeholder = `Your answer for part ${index + 1}...`;
+                    
+                    container.appendChild(label);
                     container.appendChild(input);
                 });
-            } else {
-                // Fallback for standard questions
+            } 
+            else {
+                // Standard single question
                 const input = document.createElement('input');
                 input.type = 'text';
-                input.className = 'form-control form-control-lg part-input';
-                input.id = 'answerInput';
-                input.placeholder = "Enter your answer";
+                input.className = 'form-control form-control-lg mb-3 part-input';
+                input.placeholder = "Enter your answer...";
                 container.appendChild(input);
             }
         }
 
 // In game.html
         function renderQuestionUI(question) {
+            currentQuestionType = question.type; // Set the global type here
+            currentQuestionId = question.id;
             const questionTextElement = document.getElementById('question-text');
             questionTextElement.innerHTML = ''; 
 
@@ -1145,6 +1348,15 @@
                 questionTextElement.appendChild(title);
             }
 
+            if (question.type === 'map') {
+                document.getElementById('map-container').style.display = 'block';
+                document.getElementById('answerInputsContainer').style.display = 'none'; // Hide text box
+                setTimeout(() => { initMap(); playerMap.invalidateSize(); }, 200);
+            } else {
+                document.getElementById('map-container').style.display = 'none';
+                document.getElementById('answerInputsContainer').style.display = 'block';
+            }
+
             if (question.type === 'decreasing') {
                 // Ensure we have a valid index
                 const currentIndex = question.current_clue_index !== undefined ? question.current_clue_index : 0;
@@ -1154,7 +1366,7 @@
                     if (question.clues && question.clues[i]) {
                         const clue = document.createElement('p');
                         clue.className = 'alert alert-info w-100';
-                        clue.innerText = `Clue ${i + 1}: ${question.clues[i]}`;
+                        clue.innerText = `${10 - i*2}: ${question.clues[i]}`;
                         questionTextElement.appendChild(clue);
                     }
                 }
@@ -1174,8 +1386,6 @@
 
 
         window.onload = function () {
-
-
 
             localStorage.removeItem('hasVoted');
 

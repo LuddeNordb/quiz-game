@@ -282,39 +282,86 @@ def get_questions():
     questions = data.get("questions", [])
     return jsonify({"questions": questions})
 
-@app.route('/submit_answer', methods=['POST'])
-def submit_answer():
-    """Handles the submission of answers for all question types."""
-    # Use .get() to avoid KeyError if the frontend sends a different key name
-    answer_data = request.json.get('answer') or request.json.get('answers')
-    question_id = request.json.get('question_id')
-    avatar = request.json.get('avatar')
-    username = session.get('username')
+@app.route('/viewer')
+def viewer_page():
+    return render_template('viewer.html')
 
+@app.route('/reveal_correct_location', methods=['POST'])
+def reveal_location():
     data = load_data()
     curr_q = data.get('current_question', {})
-    
-    # Logic for decreasing point questions
-    points_at_submission = 3 # Default
-    if curr_q.get('type') == 'decreasing':
-        points_at_submission = 10 - 2*curr_q.get('current_clue_index', 0)
-    
-    answer_id = len(data['answers']) + 1
-    data['answers'].append({
-        "id": answer_id,
-        "question_id": question_id,
-        "text": answer_data, # This will store the string or the list
-        "username": username,
-        "avatar": avatar,
-        "votes": [],
-        "potential_points": points_at_submission,
-        "random_num": random.randint(1, 1000),
-        "visible": False,
-        "is_correct": False
-    })
+    if curr_q.get('type') == 'map':
+        socketio.emit('show_target_location', {
+            'lat': curr_q.get('target_lat'),
+            'lon': curr_q.get('target_lon'),
+            'name': curr_q.get('text')
+        })
+        return jsonify(success=True)
+    return jsonify(success=False, message="Not a map question")
 
-    save_data(data)
-    return jsonify(success=True)
+@app.route('/submit_answer', methods=['POST'])
+def submit_answer():
+    """Handles submission for Map, Decreasing, and Standard questions safely."""
+    try:
+        # 1. Extract data safely
+        req_data = request.get_json()
+        answer_data = req_data.get('answer')
+        question_id = req_data.get('question_id')
+        avatar = req_data.get('avatar')
+        username = session.get('username', 'Anonymous')
+
+        data = load_data()
+        curr_q = data.get('current_question', {})
+        
+        # 2. Initialize defaults
+        display_text = answer_data
+        coords = None
+        points_at_submission = 0 # Default
+
+        # 3. Handle Question Types
+        q_type = curr_q.get('type')
+
+        if q_type == 'map':
+            points_at_submission = 0
+            # Only calculate distance if we actually got a coordinate dict
+            if isinstance(answer_data, dict) and 'lat' in answer_data:
+                coords = {"lat": answer_data['lat'], "lon": answer_data['lon']}
+                target_lat = curr_q.get('target_lat')
+                target_lon = curr_q.get('target_lon')
+                
+                if target_lat is not None and target_lon is not None:
+                    dist = calculate_distance(target_lat, target_lon, coords['lat'], coords['lon'])
+                    display_text = f"{dist} km away"
+        
+        elif q_type == 'decreasing':
+            # Your specific point logic for decreasing questions
+            points_at_submission = 10 - 2 * curr_q.get('current_clue_index', 0)
+
+        # 4. Save the answer with all required keys
+        answer_id = len(data['answers']) + 1
+        new_answer = {
+            "id": answer_id,
+            "question_id": question_id,
+            "text": display_text,
+            "coordinates": coords,  # Will be None for non-map questions
+            "username": username,
+            "avatar": avatar,
+            "votes": [],
+            "potential_points": points_at_submission,
+            "random_num": random.randint(1, 1000),
+            "visible": False,
+            "is_correct": False
+        }
+        
+        data['answers'].append(new_answer)
+        save_data(data)
+        
+        return jsonify(success=True)
+
+    except Exception as e:
+        # This prints the REAL error to your terminal so you can see it
+        print(f"CRITICAL ERROR IN SUBMIT_ANSWER: {e}")
+        return jsonify(success=False, error=str(e)), 500
 
 
 @app.route('/vote', methods=['POST']) #Legacy
@@ -670,5 +717,10 @@ def add_security_headers(response):
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     return response
 
+#if __name__ == '__main__':
+#    socketio.run(app, debug=False)
+
 if __name__ == '__main__':
-    socketio.run(app, debug=False)
+    # Use the port Render provides, or default to 5000 for local testing
+    port = int(os.environ.get('PORT', 5000))
+    socketio.run(app, host='0.0.0.0', port=port, debug=False)
