@@ -1,72 +1,62 @@
-<p align="center">
-  <img src="screenshots/logo.png" alt="Quiz Game Logo">
-</p>
-<p align="center">
-# Quiz Game - Multiplayer Online Game
-</p>
+# På spåret
 
-## Overview
+A real-time, interactive på spåret quiz platform featuring dynamic question types, geographic challenges.
 
-Quiz Game is an interactive multiplayer web application that brings excitement and strategy to online gaming. Players submit answers, vote on responses, and compete to showcase their wit and creativity.
+---
 
-## Key Features
+## 🚀 Key Features
 
-- 🎮 Real-time Multiplayer Gameplay
-- 📝 Dynamic Answer Submission
-- 🗳️ Interactive Voting System
-- 👥 Personalized User Avatars
-- 🏆 Competitive Scoring Mechanism
-- 🔐 Secure Admin Controls
+### 🎭 Diverse Question Types
+* **Standard/Multi-Part:** Traditional Q&A or multi-step challenges with dynamic input boxes.
+* **Decreasing Points:** High-stakes rounds where point values drop as more clues are revealed.
+* **Geographic Map Challenges:** Interactive map questions where players drop pins. The system automatically calculates the Haversine distance (km) from the target coordinates.
 
-## Technology Stack
+### 📡 Real-Time Interaction
+* **Live Viewer Page:** A dedicated, non-interactive "Big Screen" view showing the live leaderboard, current question, and clues.
+* **Instant Updates:** Powered by **Socket.IO** for zero-latency clue reveals, answer submissions, and score updates.
+* **Dynamic Image Support:** Questions can feature a gallery of images displayed across all player and viewer screens.
 
-- **Backend**: Python Flask
-- **Frontend**: HTML, CSS, JavaScript
-- **Real-time Communication**: Socket.IO
-- **Styling**: Bootstrap
+### 🗺️ Map Integration
+* **Interactive Markers:** Players use a label-free map (CartoDB Positron) to prevent cheating via city names.
+* **The Reveal:** Admin can trigger a "True Location" reveal that plots everyone's markers and the correct location (Gold Marker) simultaneously on the viewer map.
 
-## Game Mechanics
+---
 
-1. **Player Mode**
-   - Login with unique credentials
-   - Submit creative answers to questions
-   - Vote on other players' responses
-   - Earn points based on votes and accuracy
+## 🛠️ Technology Stack
 
-2. **Admin Mode**
-   - Manage game questions
-   - Control game flow
-   - Reveal and calculate points
-   - Moderate gameplay
+* **Backend:** Python Flask & Flask-SocketIO
+* **Frontend:** HTML5, CSS3, JavaScript (ES6+), Bootstrap 5
+* **Mapping:** Leaflet.js
+* **Production Server:** Gunicorn with Eventlet (optimized for WebSockets on Render)
 
-## Screenshots
+---
 
-### Login Screens
-| Login Screen | Login with Name |
-|--------------|-----------------|
-| ![Login Screen](screenshots/1-login.png) | ![Login with Name](screenshots/2-login-name.png) |
+## 🎮 Game Modes
 
-### Game Interface
-| Homepage | Admin Screen |
-|----------|--------------|
-| ![Homepage](screenshots/3-homepage.png) | ![Admin Screen](screenshots/4-admin-screen.png) |
+### 1. Player Mode (`/`)
+- Choose a unique avatar and join the lobby.
+- Submit answers via text or interactive map pins.
+- Points are calculated based on submission timing or distance accuracy.
 
-### Game Progression
-| After Revealing Answer | After Mark as Correct |
-|------------------------|------------------------|
-| ![After Revealing](screenshots/5-after-revealing-answer.png) | ![Mark as Correct](screenshots/6-after-markascorrect-and-reveal-answers.png) |
+### 2. Admin Mode (`/admin`)
+- Full control over the game flow and question selection.
+- Reveal clues one-by-one for decreasing-point rounds.
+- Moderate answers and trigger global "Reveal" events.
+- Special "Reveal Correct Location" button for map-based questions.
 
-### Final View
-| Final Admin View |
-|------------------|
-| ![Final Admin View](screenshots/7-final-view-of-admin-screen.png) |
+### 3. Viewer Mode (`/viewer`)
+- Designed for projectors or Twitch/Discord screen sharing.
+- Split-screen layout: Questions/Map on the left, Scoreboard on the right.
+- Visualizes "Distance Lines" between player guesses and the truth.
+
+---
 
 ## Prerequisites
 
 - Python 3.8+
 - pip
 
-## Installation
+## 📦 Installation & Local Setup
 
 1. Clone the repository
    ```bash
@@ -105,21 +95,7 @@ python app.py
 - Keep `.env` file private
 - Do not share credentials
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit changes
-4. Push to branch
-5. Open pull request
 
 ## License
 
 MIT License - see [LICENSE](LICENSE) file
-
-## Future Enhancements
-
-- [ ] Add more question types
-- [ ] Implement advanced user authentication
-- [ ] Create global leaderboard
-- [ ] Support multiple languages
