@@ -1,39 +1,48 @@
 {
     "questions": [
         {
+            "id": 0,
+            "name": "Testfråga!",
+            "parts": [
+                "Vad heter du?"
+            ],
+            "images": []
+        },
+        {
             "id": 1,
             "name": "Resa 1: Vart är vi på väg?",
             "type": "decreasing",
             "clues": [
-                "It is found in a kitchen.",
-                "It is used for boiling water.",
-                "It whistles when ready.",
-                "It has a handle and a spout.",
-                "The name starts with 'K'."
+                "Vi reser mot systerstad till Lyon och Chicago, vi söker huvudstaden i en region med fågel i början, serveringsställe i mitten, och långsiktig kosthållning i slutet ",
+                "Här fick Bonapparte sin andra krona 1805. Namnet på stadens stora teater, har Henrik dorsin snott till sin egen i stockholm.",
+                "10 tusen meter inleder våra stad med ano(r) från 500 talet före kristus. Inte långt från vår stad har Anakin, James bond och Danny Ocean simmat.",
+                "Här i norr påbörjades mussulinis march mot rom, Armani, Prada och Versace, det låter som en gängkriminells våta dröm men det är i den här staden de sydde sin första söm.",
+                "Här ska OS 2026 hållas, kan du knata en MIL i stil så har du halva vårt resmål. Välkommen till Italiens näst största stad."
             ],
             "current_clue_index": 0,
             "images": []
         },
         {
-            "id": 1,
+            "id": 2,
             "name": "Resa 1: Frågor #1",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Stadio Giuseppe Meazza tar in ca 80k, vad kallas det i folkmun?",
+                "Vad kallas de två lagen?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 3,
             "name": "Resa 1: Frågor #2",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Namnet på personen som varit italiens priemiärminister och ägare av AC Milan?",
+                "Vad heter nuvarande premiärministern?",
+                "Vad heter landet?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 4,
             "name": "Resa 1: Musikfrågor",
             "parts": [
                 "What is your favorite color?",
@@ -43,47 +52,50 @@
             "images": []
         },
         {
-            "id": 1,
+            "id": 5,
             "name": "Resa 2: Vart är vi på väg?",
             "type": "decreasing",
             "clues": [
-                "It is found in a kitchen.",
-                "It is used for boiling water.",
-                "It whistles when ready.",
-                "It has a handle and a spout.",
-                "The name starts with 'K'."
+                "Fransk cocktail initierar er till staden som gärna titulerar sig som störst och djupast. Även fast den bara grundades 1900",
+                "Staden är omgiven av två berg, på ena sidan ligger Loussavaara och på andra sidan gräver Anders Borg. När man inte gräver så sysslar staden även med att blicka uppåt.",
+                "Spansk etta avslutar staden som är Europas kulturhuvudstad 2029. Enligt guds ögon tillhör staden fortfarande jukkasjärvi.",
+                "Vi rör oss mot malmbanans centralstation där nasisterna fraktade stål till narvik. 4 Veckor per år behöver inte vampyrerna vara rädda för sol.",
+                "Vi närmar oss en av sveriges nordligaste och till ytan största städer, belägen i centrala lappland"
             ],
             "current_clue_index": 0
         },
         {
-            "id": 1,
+            "id": 6,
             "name": "Resa 2: Frågor #1",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Vilka två huvudsakliga ämnen tillverkar man stål av?",
+                "Vad heter den europeiska rymdbas som är belägen i kiruna?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 7,
             "name": "Resa 2: Frågor #2",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Hur högt är kebenekaise?",
+                "Hur många toppar har kebenekaise?",
+                "Vad heter skandernas högsta berg?"
             ],
             "images": []
         },
         {
-            "id": 4,
+            "id": 8,
             "name": "Vart är vi? #1",
             "type": "map",
             "text": "placeholder text",
             "target_lat": 48.8566,
             "target_lon": 2.3522,
-            "images": []
+            "images": [
+                "jeep.jpg"
+            ]
         },
         {
-            "id": 4,
+            "id": 9,
             "name": "Vart är vi? #2",
             "type": "map",
             "text": "placeholder text",
@@ -92,7 +104,7 @@
             "images": []
         },
         {
-            "id": 4,
+            "id": 10,
             "name": "Vart är vi? #3",
             "type": "map",
             "text": "placeholder text",
@@ -101,7 +113,7 @@
             "images": []
         },
         {
-            "id": 4,
+            "id": 11,
             "name": "Vart är vi? #4",
             "type": "map",
             "text": "placeholder text",
@@ -110,44 +122,45 @@
             "images": []
         },
         {
-            "id": 1,
+            "id": 12,
             "name": "Resa 3: Vart är vi på väg?",
             "type": "decreasing",
             "clues": [
-                "It is found in a kitchen.",
-                "It is used for boiling water.",
-                "It whistles when ready.",
-                "It has a handle and a spout.",
-                "The name starts with 'K'."
+                "I vår stora oranga stad får man inte lalla i landet. Här har Frank Andersson fått smaka på broms.",
+                "I staden finner du filurer, plundrare, sjöar och kungar. Starka chilis finns finns här både inom rocken och gastronomins värld.",
+                "Staden är störst i provincen av guld, där även svenskar varit och grävt 1994. I staden bor även Carlton Banks.",
+                "Vår stad har tidigare varit både spansk och mexikanskt. Trevor, Franklin och Michael härjar i stadens virituella syster.",
+                "Känner du dig los(t) i änglarnas stad kan du alltid gå ner till venice beach för ett bad. Välkommen till USAs #2 och Californias #1."
             ],
             "current_clue_index": 0,
             "images": []
         },
         {
-            "id": 1,
+            "id": 13,
             "name": "Resa 3: Frågor #1",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Film #1",
+                "Film #2",
+                "Film #3"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 14,
             "name": "Resa 3: Frågor #2",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Vad står EGOT för?",
+                "Vem höll oscarsgalan 2024?",
+                "Vilken film vann bästa film 2024?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 15,
             "name": "Resa 3: Musikfrågor",
             "parts": [
-                "What is your favorite color?",
-                "Why?",
-                "What is your favorite animal?"
+                "Vad heter låten i början?",
+                "Vad heter artisten i huvudlåten?"
             ],
             "images": []
         }
@@ -155,17 +168,17 @@
     "answers": [
         {
             "id": 1,
-            "question_id": 4,
-            "text": "1569.96 km away",
+            "question_id": 8,
+            "text": "1.45 km away",
             "coordinates": {
-                "lat": 51.70320428462806,
-                "lon": 24.082031250000004
+                "lat": 48.84624802303219,
+                "lon": 2.3400878906250004
             },
             "username": "Lodd",
             "avatar": "/static/avatars/3.webp",
             "votes": [],
             "potential_points": 0,
-            "random_num": 896,
+            "random_num": 860,
             "visible": false,
             "is_correct": false
         }
@@ -174,12 +187,14 @@
     "reveal": false,
     "users": [],
     "current_question": {
-        "id": 4,
+        "id": 8,
         "name": "Vart är vi? #1",
         "type": "map",
         "text": "placeholder text",
         "target_lat": 48.8566,
         "target_lon": 2.3522,
-        "images": []
+        "images": [
+            "jeep.jpg"
+        ]
     }
 }

@@ -1,185 +1,206 @@
 {
     "questions": [
         {
+            "id": 0,
+            "name": "Testfråga!",
+            "parts": [
+                "Vad heter du?"
+            ],
+            "images": []
+        },
+        {
             "id": 1,
             "name": "Resa 1: Vart är vi på väg?",
             "type": "decreasing",
             "clues": [
-                "It is found in a kitchen.",
-                "It is used for boiling water.",
-                "It whistles when ready.",
-                "It has a handle and a spout.",
-                "The name starts with 'K'."
+                "Vi reser mot kaffestad där jordbävningarna är frekventa. Om du vill handla något i Emerald Staden så finner du här gäddans plats samt en tropisk handelsplats.",
+                "Är du mer intresserad av sport så kan du istället kolla på sjöhökarna, sjömännen eller kraken. Likt göteborg så är staden vid puget sundet känd för regniga klimat.",
+                "En av landets grundare kan ge dig namnet för regionen där vi också finner företag som Microsoft, Amazon och Boeing.",
+                "Vill du nå upp till rymden så kan stadens Space Needle hjälpa dig på traven. Se till att le också när du löst denna ordgåta.",
+                "Vi närmar oss Washingtons states största stad där medicinsk majurana länge varit lagligt. Välkommen till USAs nordvästra utpost…"
             ],
             "current_clue_index": 0,
             "images": []
         },
         {
-            "id": 1,
+            "id": 2,
             "name": "Resa 1: Frågor #1",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Vad heter skalan som man mäter jordbävning med?",
+                "Hur stark var den jordbävning som skedde i Chile 1960?",
+                "Vad heter den djupaste punkten på jorden?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 3,
             "name": "Resa 1: Frågor #2",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Vilket år invigdes Burj Khalifa?",
+                "I vilken stad ligger burj Khalifa?",
+                "Vad heter den kända svenska byggnaden som är ritad av SOM?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 4,
             "name": "Resa 1: Musikfrågor",
             "parts": [
-                "What is your favorite color?",
-                "Why?",
-                "What is your favorite animal?"
+                "Artistens namn i första låten?",
+                "Namn på andra låten?",
+                "Musikgenren?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 5,
             "name": "Resa 2: Vart är vi på väg?",
             "type": "decreasing",
             "clues": [
-                "It is found in a kitchen.",
-                "It is used for boiling water.",
-                "It whistles when ready.",
-                "It has a handle and a spout.",
-                "The name starts with 'K'."
+                "Vi färdas längst vattenflod mot jäst dryck, här i drömmarnas stad finns den äldsta djurgården och det fina brunnspalatset.",
+                "Engelsk tax och nougat finns vid vår plats som också huserat freud och asberger. Flyter du medströms så kommer du snart till en mer bra motsvarighet.",
+                "Bröd och schnitzel är starkt förknippade till vårt resmål vid alpernas slut. Staden är i övrigt känt för sina baler och klassiska musiker.",
+                "Vi färdas österut i riket där vårt resmål är störst. Även fast vi inte är i tyskland så talar nästan alla tyska.",
+                "Vi är snart framme i stad med egen vingård som också råkar vara österikes huvudstad. Välkommen till..."
             ],
             "current_clue_index": 0
         },
         {
-            "id": 1,
+            "id": 6,
             "name": "Resa 2: Frågor #1",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Vilket land i nya vinvärlden producerar mest vin per år?",
+                "Vad heter druvan i nya världen?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 7,
             "name": "Resa 2: Frågor #2",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Gubbe #1",
+                "Gubbe #2",
+                "Gubbe #3"
+            ],
+            "images": ["r2f3.png"]
+        },
+        {
+            "id": 7,
+            "name": "Resa 2: Frågor #3",
+            "parts": [
+                "Stad #1",
+                "Stad #2",
+                "Stad #3"
             ],
             "images": []
         },
+        
         {
-            "id": 4,
+            "id": 8,
             "name": "Vart är vi? #1",
             "type": "map",
-            "text": "placeholder text",
-            "target_lat": 48.8566,
-            "target_lon": 2.3522,
-            "images": []
+            "text": "Frihetsgudinnan",
+            "target_lat": 40.6892,
+            "target_lon": -74.0445,
+            "images": [
+                "map1.jpg"
+            ]
         },
         {
-            "id": 4,
+            "id": 9,
             "name": "Vart är vi? #2",
             "type": "map",
-            "text": "placeholder text",
-            "target_lat": 48.8566,
-            "target_lon": 2.3522,
-            "images": []
+            "text": "Någon arc?",
+            "target_lat": 38.625019,
+            "target_lon": -90.186822,
+            "images": ["map2.jpg"]
         },
         {
-            "id": 4,
+            "id": 10,
             "name": "Vart är vi? #3",
             "type": "map",
-            "text": "placeholder text",
-            "target_lat": 48.8566,
-            "target_lon": 2.3522,
-            "images": []
+            "text": "Kranen?",
+            "target_lat": 57.697470,
+            "target_lon": 11.909139,
+            "images": ["map3.jpg"]
         },
         {
-            "id": 4,
+            "id": 11,
             "name": "Vart är vi? #4",
             "type": "map",
-            "text": "placeholder text",
-            "target_lat": 48.8566,
-            "target_lon": 2.3522,
+            "text": "Slott",
+            "target_lat": 48.635556,
+            "target_lon": -1.511917,
+            "images": ["map4.jpg"]
+        },
+        {
+            "id": 12,
+            "name": "Vart är vi? #4",
+            "type": "map",
+            "text": "Vart ligger Verum?",
+            "target_lat": 57.68716550903403,
+            "target_lon": 11.976613941196508,
             "images": []
         },
         {
-            "id": 1,
+            "id": 13,
             "name": "Resa 3: Vart är vi på väg?",
             "type": "decreasing",
             "clues": [
-                "It is found in a kitchen.",
-                "It is used for boiling water.",
-                "It whistles when ready.",
-                "It has a handle and a spout.",
-                "The name starts with 'K'."
+                "Vi reser uppåt mot östra aros där Hammarsköld avslutade sin resa. Här är även ljusstark stjärna central inom sporten.",
+                "Post Scriptum, Systema naturae och Alfa Canis Majoris har alla centrala platser i vår stad där det enligt uppgift lär ha funnits lärda redan 1477.",
+                "Det är dags att höja upp temperaturen några celcius för på remålet har man satt fyr i såväl å som på majbrasa.",
+                "Mondo, Maggio och Murre kan alla kopplas till denna studentstad med egen botanisk trädgård. Gustav Vasa uppehåller sig inte på stadens slott utan vilar i domkyrkan.",
+                "Vi är på väg mot sveriges fyra, där den uppmärksamma troligen upptäckt att vi är på väg mot en av upplands största städer…"
             ],
             "current_clue_index": 0,
             "images": []
         },
         {
-            "id": 1,
+            "id": 14,
             "name": "Resa 3: Frågor #1",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Vilket år slutade kristendomen vara statsreligion i Sverige?",
+                "I höstas var det kyrkoval, hur ofta sker kyrkovalet i Sverige?"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 15,
             "name": "Resa 3: Frågor #2",
             "parts": [
-                "What is your favorite color?",
-                "Why?"
+                "Nation #1",
+                "Nation #2",
+                "Nation #3"
             ],
             "images": []
         },
         {
-            "id": 1,
+            "id": 16,
+            "name": "Resa 3: Frågor #3",
+            "parts": [
+                "Vilken dag sker möss påtagningen i Uppsala?",
+                "Potatisen kunde användas till vadå?",
+            ],
+            "images": []
+        },
+        {
+            "id": 17,
             "name": "Resa 3: Musikfrågor",
             "parts": [
-                "What is your favorite color?",
-                "Why?",
-                "What is your favorite animal?"
+                "Vad heter artisten i första låten?",
+                "Vad heter artisten i andra låten?",
+                "Vilken stad kommer colabartisten ifrån?"
             ],
             "images": []
         }
     ],
     "answers": [
-        {
-            "id": 1,
-            "question_id": 4,
-            "text": "1569.96 km away",
-            "coordinates": {
-                "lat": 51.70320428462806,
-                "lon": 24.082031250000004
-            },
-            "username": "Lodd",
-            "avatar": "/static/avatars/3.webp",
-            "votes": [],
-            "potential_points": 0,
-            "random_num": 896,
-            "visible": true,
-            "is_correct": false
-        }
     ],
     "votes": [],
     "reveal": false,
     "users": [],
     "current_question": {
-        "id": 4,
-        "name": "Vart är vi? #1",
-        "type": "map",
-        "text": "placeholder text",
-        "target_lat": 48.8566,
-        "target_lon": 2.3522,
-        "images": []
+       
     }
 }
