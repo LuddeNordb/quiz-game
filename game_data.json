@@ -180,7 +180,7 @@
             "name": "Resa 3: Frågor #3",
             "parts": [
                 "Vilken dag sker möss påtagningen i Uppsala?",
-                "Potatisen kunde användas till vadå?",
+                "Potatisen kunde användas till vadå?"
             ],
             "images": []
         },
@@ -201,6 +201,6 @@
     "reveal": false,
     "users": [],
     "current_question": {
-       
+
     }
 }
