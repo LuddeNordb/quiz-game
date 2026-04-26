@@ -515,10 +515,11 @@
                     // Adjust column size based on number of images
                     col.className = images.length === 1 ? 'col-12' : 'col-6 col-md-4';
                     
+                    const imgSrc = imgName.startsWith('http') ? imgName : `/static/images/${imgName}`;
                     col.innerHTML = `
                         <div class="card bg-dark border-secondary">
-                            <img src="/static/images/${imgName}" 
-                                class="card-img-top img-fluid rounded shadow-sm" 
+                            <img src="${imgSrc}"
+                                class="card-img-top img-fluid rounded shadow-sm"
                                 style="max-height: 300px; object-fit: contain; padding: 5px;"
                                 onclick="window.open(this.src, '_blank')"
                                 alt="Question Image">

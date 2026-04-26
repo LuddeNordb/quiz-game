@@ -271,6 +271,27 @@
 
 
 
+        function uploadQuiz() {
+            const file = document.getElementById('quizFileInput').files[0];
+            if (!file) {
+                Swal.fire('No file selected', 'Please choose a .json quiz file first.', 'warning');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('quiz_file', file);
+            fetch('/load_quiz', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Loaded!', `${data.count} questions loaded.`, 'success');
+                        fetchQuestions();
+                    } else {
+                        Swal.fire('Error', data.error || 'Failed to load quiz.', 'error');
+                    }
+                })
+                .catch(() => Swal.fire('Error', 'Upload failed.', 'error'));
+        }
+
         // Fetch questions list from server on page load
 
         function fetchQuestions() {
@@ -1007,7 +1028,13 @@
 
         <h1 class="text-center mb-5 text-light hard-shadow">Admin Control Panel</h1>
 
-
+        <div class="card mb-4 col-12 mx-auto">
+            <div class="card-body text-center">
+                <h5 class="text-light mb-3">Load Quiz</h5>
+                <input type="file" id="quizFileInput" accept=".json" class="form-control mb-2">
+                <button class="btn btn-success btn-lg w-50" onclick="uploadQuiz()">Upload & Replace Questions</button>
+            </div>
+        </div>
 
         <div class="text-center mb-4 col-12 mx-auto">
 

@@ -26,3 +26,6 @@ Thumbs.db
 # Sensitive files
 users.json
 Caddyfile
+
+# Local tools (not deployed)
+question_builder.html

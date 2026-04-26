@@ -442,6 +442,28 @@ def remove_question():
 
     return jsonify(success=True)
 
+@app.route('/load_quiz', methods=['POST'])
+def load_quiz():
+    """Replaces all questions with the uploaded JSON file."""
+    file = request.files.get('quiz_file')
+    if not file:
+        return jsonify(success=False, error="No file provided")
+    try:
+        questions = json.load(file)
+    except (json.JSONDecodeError, Exception) as e:
+        return jsonify(success=False, error=f"Invalid JSON: {e}")
+    for i, q in enumerate(questions):
+        q['id'] = i
+        q.setdefault('type', 'standard')
+        if q['type'] == 'decreasing':
+            q['current_clue_index'] = 0
+        q.setdefault('images', [])
+    data = load_data()
+    data['questions'] = questions
+    save_data(data)
+    socketio.emit('questions_updated')
+    return jsonify(success=True, count=len(questions))
+
 @app.route('/clear_data', methods=['POST'])
 def clear_data():
     """Resets the game data while preserving user scores and question structures."""
